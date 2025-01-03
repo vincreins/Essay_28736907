@@ -4,7 +4,7 @@ output:
     variant: markdown_github
 ---
 
-### Risk Parity Portfolios (RPPs) Analysis: A South African Perspective  
+### Risk Parity Portfolios Analysis: A South African Perspective  
 
 #### Introduction  
 Risk parity portfolios (RPPs) aim to construct portfolios where each asset contributes equally to the overall portfolio risk. Unlike traditional portfolio creation methods based on modern portfolio theory (MPT), such as the mean-variance approach, RPPs avoid reliance on return forecasts. Instead, they focus on risk estimates, particularly volatility and correlation.  

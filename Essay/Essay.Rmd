@@ -1,0 +1,291 @@
+---
+# IMPORTANT: Change settings here, but DO NOT change the spacing.
+# Remove comments and add values where applicable.
+# The descriptions below should be self-explanatory
+
+title: "Helping You Write Academic Papers in R using Texevier"
+#subtitle: "This will appear as Right Header"
+
+documentclass: "elsarticle"
+
+# --------- Thesis title (Optional - set to FALSE by default).
+# You can move the details below around as you please.
+Thesis_FP: FALSE
+# Entry1: "An unbelievable study with a title spanning multiple lines."
+# Entry2: "\\textbf{Some Guy}" # textbf for bold
+# Entry3: "A thesis submitted toward the degree of Doctor of Philosophy"
+# Uni_Logo: Tex/Logo.png # Place a logo in the indicated location (from your root, e.g. defaults to ~/Tex/Logo.png) and uncomment this line. Leave uncommented for no image
+# Logo_width: 0.3 # If using a logo - use this to set width (size) of image
+# Entry4: "Under the supervision of: \\vfill Prof. Joe Smith and Dr. Frank Smith"
+# Entry5: "Stellenbosch University"
+# Entry6: April 2020
+# Entry7:
+# Entry8:
+
+# --------- Front Page
+# Comment: ----- Follow this pattern for up to 5 authors
+AddTitle: TRUE # Use FALSE when submitting to peer reviewed platform. This will remove author names.
+Author1: "Jane Doe^[__Contributions:__  \\newline _The authors would like to thank no institution for money donated to this project. Thank you sincerely._]"  # First Author - note the thanks message displayed as an italic footnote of first page.
+Ref1: "Some Institution, Cape Town, South Africa" # First Author's Affiliation
+Email1: "nfkatzke\\@gmail.com" # First Author's Email address
+
+Author2: "John Smith"
+Ref2: "Some other Institution, Cape Town, South Africa"
+Email2: "John\\@gmail.com"
+CommonAffiliation_12: TRUE # If Author 1 and 2 have a common affiliation. Works with _13, _23, etc.
+
+Author3: "John Doe"
+Email3: "Joe\\@gmail.com"
+
+CorrespAuthor_1: TRUE  # If corresponding author is author 3, e.g., use CorrespAuthor_3: TRUE
+
+# Comment out below to remove both. JEL Codes only given if keywords also given.
+keywords: "Multivariate GARCH \\sep Kalman Filter \\sep Copula" # Use \\sep to separate
+JELCodes: "L250 \\sep L100"
+
+# ----- Manage headers and footers:
+#BottomLFooter: $Title$
+#BottomCFooter:
+#TopLHeader: \leftmark # Adds section name at topleft. Remove comment to add it.
+BottomRFooter: "\\footnotesize Page \\thepage" # Add a '#' before this line to remove footer.
+addtoprule: TRUE
+addfootrule: TRUE               # Use if footers added. Add '#' to remove line.
+
+# --------- page margins:
+margin: 2.3 # Sides
+bottom: 2 # bottom
+top: 2.5 # Top
+HardSet_layout: TRUE # Hard-set the spacing of words in your document. This will stop LaTeX squashing text to fit on pages, e.g.
+# This is done by hard-setting the spacing dimensions. Set to FALSE if you want LaTeX to optimize this for your paper.
+
+# --------- Line numbers
+linenumbers: FALSE # Used when submitting to journal
+
+# ---------- References settings:
+# You can download cls format here: https://www.zotero.org/ - simply search for your institution. You can also edit and save cls formats here: https://editor.citationstyles.org/about/
+# Hit download, store it in Tex/ folder, and change reference below - easy.
+bibliography: Tex/ref.bib       # Do not edit: Keep this naming convention and location.
+csl: Tex/harvard-stellenbosch-university.csl # referencing format used.
+# By default, the bibliography only displays the cited references. If you want to change this, you can comment out one of the following:
+#nocite: '@*' # Add all items in bibliography, whether cited or not
+# nocite: |  # add specific references that aren't cited
+#  @grinold2000
+#  @Someoneelse2010
+
+# ---------- General:
+RemovePreprintSubmittedTo: TRUE  # Removes the 'preprint submitted to...' at bottom of titlepage
+Journal: "Journal of Finance"   # Journal that the paper will be submitting to, if RemovePreprintSubmittedTo is set to TRUE.
+toc: FALSE                       # Add a table of contents
+numbersections: TRUE             # Should sections (and thus figures and tables) be numbered?
+fontsize: 11pt                  # Set fontsize
+linestretch: 1.2                # Set distance between lines.
+link-citations: TRUE            # This creates dynamic links to the papers in reference list.
+
+### Adding additional latex packages:
+# header-includes:
+#    - \usepackage{colortbl} # Add additional packages here.
+
+output:
+  pdf_document:
+    keep_tex: TRUE
+    template: Tex/TexDefault.txt
+    fig_width: 3.5 # Adjust default figure sizes. This can also be done in the chunks of the text.
+    fig_height: 3.5
+abstract: |
+  Abstract to be written here. The abstract should not be too long and should provide the reader with a good understanding what you are writing about. Academic papers are not like novels where you keep the reader in suspense. To be effective in getting others to read your paper, be as open and concise about your findings here as possible. Ideally, upon reading your abstract, the reader should feel he / she must read your paper in entirety.
+---
+
+<!-- First: Set your default preferences for chunk options: -->
+
+<!-- If you want a chunk's code to be printed, set echo = TRUE. message = FALSE stops R printing ugly package loading details in your final paper too. I also suggest setting warning = FALSE and checking for warnings in R, else you might find ugly warnings in your paper. -->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.width = 6, fig.height = 5, fig.pos="H", fig.pos = 'H')
+# Note: Include = FALSE implies the code is executed, but not printed in your pdf.
+# warning and message = FALSE implies ugly messages and warnings are removed from your pdf.
+# These should be picked up when you execute the command chunks (code sections below) in your rmd, not printed in your paper!
+
+# Lets load in example data, and see how this can be stored and later called from your 'data' folder.
+if(!require("tidyverse")) install.packages("tidyverse")
+library(tidyverse)
+Example_data <- Texevier::Ex_Dat
+
+# Notice that as you are working in a .Rproj file (I am assuming you are) - the relative paths of your directories start at your specified root.
+# This means that when working in a .Rproj file, you never need to use getwd() - it is assumed as your base root automatically.
+write_rds(Example_data, path = "data/Example_data.rds")
+
+```
+
+
+<!-- ############################## -->
+<!-- # Start Writing here: -->
+<!-- ############################## -->
+
+# Introduction \label{Introduction}
+
+
+
+<!-- The following is a code chunk. It must have its own unique name (after the r), or no name. After the comma follows commands for R which are self-explanatory. By default, the code and messages will not be printed in your pdf, just the output: -->
+
+```{r Figure1,  warning =  FALSE, fig.align = 'center', fig.cap = "Caption Here \\label{Figure1}", fig.ext = 'png', fig.height = 3, fig.width = 6}
+
+ALSI <- read_rds("/Users/x/Documents/Uni/VWL/Stellenbosch/2. Semester/Fin/Data_24/ALSI.rds")
+LCL_Indices <- read_rds("/Users/x/Downloads/Data_2024/LCL_Indices.rds")
+LCL_Stock_Returns <- read_rds("/Users/x/Downloads/Data_2024/LCL_Stock_Returns.rds")
+BondYields_10Y_SA <- read_rds("/Users/x/Downloads/Data_2024/BondYields_10Y_SA.rds")
+BondYields_2Y_SA <- read_rds("/Users/x/Downloads/Data_2024/BondYields_2Y_SA.rds")
+SA_Growth <- read_csv2("/Users/x/Downloads/SA_Growth.csv")
+
+```
+
+Calculating returns of index fund
+
+```{r}
+LCL_filtered <- filter_stock_function(LCL_Stock_Returns)
+ALSI_weights <- filter_weight_index(LCL_Stock_Returns, "J203")
+ALSI_returns <- Return.portfolio(LCL_filtered, weights = ALSI_weights, verbose = TRUE)
+
+```
+
+Extract bond data
+
+```{r}
+Bond_return_10 <- Bond_return(BondYields_10Y_SA, "BondYield_10", 10)
+Bond_return_2 <- Bond_return(BondYields_2Y_SA, "BondYield_2", 2)
+
+LCL_Bond <- merge.xts(Bond_return_10, Bond_return_2, LCL_filtered, join = "inner")
+
+```
+
+
+Creating RPP portfolio
+
+```{r}
+Sigma <- cov(LCL_Bond)
+portfolio.parity <- riskParityPortfolio(Sigma)
+rWindows<-rollingWindows(LCL_Bond, period="12m",
+                         by="3m")
+
+parity.weights<-RollingRiskParity(rWindows$from@Data, rWindows$to@Data, LCL_Bond) %>% na.omit()
+parity.returns <- Return.portfolio(LCL_Bond, weights=parity.weights,verbose=TRUE)
+
+```
+
+
+```{r}
+
+p.returns<-merge.xts(ALSI_returns$returns, parity.returns$returns, join = "inner")
+names(p.returns)<-c("J203", "RPP")
+
+
+PerformanceAnalytics::charts.PerformanceSummary(p.returns, colorset=rich6equal,
+                          lwd=2, cex.legend = 1.0, event.labels = TRUE, main = "")
+
+
+PerformanceAnalytics::chart.StackedBar(parity.weights, 
+                                       xlab = "Rebalance Dates",
+                                       ylab = "Weight", 
+                                       main = "Risk Parity")
+
+```
+
+
+```{r}
+Sigma_nb <- cov(LCL_filtered)
+portfolio.parity.nb <- riskParityPortfolio(Sigma_nb)
+rWindows.nb<-rollingWindows(LCL_filtered, period="12m",
+                         by="3m")
+
+parity.weights.nb <- RollingRiskParity(rWindows.nb$from@Data, rWindows.nb$to@Data, LCL_filtered) %>% na.omit()
+parity.returns.nb <- Return.portfolio(LCL_filtered, weights=parity.weights.nb,verbose=TRUE)
+
+
+```
+
+```{r}
+p.returns.nb <- merge.xts(ALSI_returns$returns, parity.returns.nb$returns, parity.returns$returns, join = "inner")
+names(p.returns.nb)<-c("J203", "RPP w/o Bonds", "RPP")
+
+
+PerformanceAnalytics::charts.PerformanceSummary(p.returns.nb, colorset=rich6equal,
+                          lwd=2, cex.legend = 1.0, event.labels = TRUE, main = "")
+
+
+PerformanceAnalytics::chart.StackedBar(parity.weights, 
+                                       xlab = "Rebalance Dates",
+                                       ylab = "Weight", 
+                                       main = "Risk Parity")
+
+```
+
+
+Econ Regime
+
+```{r}
+library(lubridate)
+
+return_parity <- return_data(parity.returns)
+return_ALSI <- return_data(ALSI_returns)
+return_parity_nb <- return_data(parity.returns.nb)
+
+regime <- economic_regime(SA_Growth, 3, 0)
+
+results_ALSI <- regime_returns(return_ALSI, regime)
+results_RPP <- regime_returns(return_parity, regime)
+results_RPP_nb <- regime_returns(return_parity_nb, regime)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+
+chart.RollingPerformance(
+  R = p.returns.nb,
+  FUN = "SharpeRatio.annualized",
+  width = 12,
+  main = "Rolling Sharpe Ratio",
+  legend.loc = "topright"
+)
+
+table.DrawdownsRatio(p.returns.nb, Rf = 0.095)
+
+risk_f <- mean(BondYields_10Y_SA$BondYield_10)
+SharpeRatio(p.returns.nb, Rf = 0.095)
+SortinoRatio(p.returns.nb, Rf = 0.095)
+CDD(p.returns.nb, Rf = 0.095)
+UpsidePotentialRatio(p.returns.nb, MAR = 0.053)
+
+TreynorRatio(parity.returns$returns, ALSI_returns$returns)
+TreynorRatio(parity.returns.nb$returns, ALSI_returns$returns)
+
+
+calculate_ratios(p.returns.nb, BondYields_10Y_SA$BondYield_10, 0.053)
+
+
+mar_ratios <- apply(ALSI_returns$returns, 2, function(x) {
+  annualized_return <- Return.annualized(x)
+  max_drawdown <- maxDrawdown(x)
+  annualized_return / max_drawdown
+})
+
+
+CVaR(p.returns.nb, method = "historical")
+VaR(p.returns.nb, method = "historical")
+```
+
+
+
+
+
+
+

@@ -46,4 +46,132 @@ library(tidyverse)
 list.files('code/', full.names = T, recursive = T) %>% .[grepl('.R', .)] %>% as.list() %>% walk(~source(.))
 ```
 
+```{r}
+ALSI <- read_rds("/Users/x/Documents/Uni/VWL/Stellenbosch/2. Semester/Fin/Data_24/ALSI.rds")
+LCL_Indices <- read_rds("/Users/x/Downloads/Data_2024/LCL_Indices.rds")
+LCL_Stock_Returns <- read_rds("/Users/x/Downloads/Data_2024/LCL_Stock_Returns.rds")
+BondYields_10Y_SA <- read_rds("/Users/x/Downloads/Data_2024/BondYields_10Y_SA.rds")
+BondYields_2Y_SA <- read_rds("/Users/x/Downloads/Data_2024/BondYields_2Y_SA.rds")
+SA_Growth <- read_csv2("/Users/x/Downloads/SA_Growth.csv")
+```
+
+```{r}
+LCL_filtered <- filter_stock_function(LCL_Stock_Returns)
+ALSI_weights <- filter_weight_index(LCL_Stock_Returns, "J203")
+ALSI_returns <- Return.portfolio(LCL_filtered, weights = ALSI_weights, verbose = TRUE)
+```
+
+```{r}
+Bond_return_10 <- Bond_return(BondYields_10Y_SA, "BondYield_10", 10)
+Bond_return_2 <- Bond_return(BondYields_2Y_SA, "BondYield_2", 2)
+
+LCL_Bond <- merge.xts(Bond_return_10, Bond_return_2, LCL_filtered, join = "inner")
+```
+
+```{r}
+Sigma <- cov(LCL_Bond)
+portfolio.parity <- riskParityPortfolio(Sigma)
+rWindows<-rollingWindows(LCL_Bond, period="12m",
+                         by="3m")
+
+parity.weights<-RollingRiskParity(rWindows$from@Data, rWindows$to@Data, LCL_Bond) %>% na.omit()
+parity.returns <- Return.portfolio(LCL_Bond, weights=parity.weights,verbose=TRUE)
+
+```
+
+```{r}
+p.returns<-merge.xts(ALSI_returns$returns, parity.returns$returns, join = "inner")
+names(p.returns)<-c("J203", "RPP")
+
+
+PerformanceAnalytics::charts.PerformanceSummary(p.returns, colorset=rich6equal,
+                          lwd=2, cex.legend = 1.0, event.labels = TRUE, main = "")
+
+
+PerformanceAnalytics::chart.StackedBar(parity.weights, 
+                                       xlab = "Rebalance Dates",
+                                       ylab = "Weight", 
+                                       main = "Risk Parity")
+```
+
+```{r}
+Sigma_nb <- cov(LCL_filtered)
+portfolio.parity.nb <- riskParityPortfolio(Sigma_nb)
+rWindows.nb<-rollingWindows(LCL_filtered, period="12m",
+                         by="3m")
+
+parity.weights.nb <- RollingRiskParity(rWindows.nb$from@Data, rWindows.nb$to@Data, LCL_filtered) %>% na.omit()
+parity.returns.nb <- Return.portfolio(LCL_filtered, weights=parity.weights.nb,verbose=TRUE)
+
+```
+
+```{r}
+p.returns.nb <- merge.xts(ALSI_returns$returns, parity.returns.nb$returns, parity.returns$returns, join = "inner")
+names(p.returns.nb)<-c("J203", "RPP w/o Bonds", "RPP")
+
+
+PerformanceAnalytics::charts.PerformanceSummary(p.returns.nb, colorset=rich6equal,
+                          lwd=2, cex.legend = 1.0, event.labels = TRUE, main = "")
+
+
+PerformanceAnalytics::chart.StackedBar(parity.weights, 
+                                       xlab = "Rebalance Dates",
+                                       ylab = "Weight", 
+                                       main = "Risk Parity")
+
+```
+
+
+```{r}
+library(lubridate)
+
+return_parity <- return_data(parity.returns)
+return_ALSI <- return_data(ALSI_returns)
+return_parity_nb <- return_data(parity.returns.nb)
+
+regime <- economic_regime(SA_Growth, 3, 0)
+
+results_ALSI <- regime_returns(return_ALSI, regime)
+results_RPP <- regime_returns(return_parity, regime)
+results_RPP_nb <- regime_returns(return_parity_nb, regime)
+```
+
+
+```{r}
+chart.RollingPerformance(
+  R = p.returns.nb,
+  FUN = "SharpeRatio.annualized",
+  width = 12,
+  main = "Rolling Sharpe Ratio",
+  legend.loc = "topright"
+)
+
+table.DrawdownsRatio(p.returns.nb, Rf = 0.095)
+
+risk_f <- mean(BondYields_10Y_SA$BondYield_10)
+SharpeRatio(p.returns.nb, Rf = 0.095)
+SortinoRatio(p.returns.nb, Rf = 0.095)
+CDD(p.returns.nb, Rf = 0.095)
+UpsidePotentialRatio(p.returns.nb, MAR = 0.053)
+
+TreynorRatio(parity.returns$returns, ALSI_returns$returns)
+TreynorRatio(parity.returns.nb$returns, ALSI_returns$returns)
+
+
+calculate_ratios(p.returns.nb, BondYields_10Y_SA$BondYield_10, 0.053)
+
+
+mar_ratios <- apply(ALSI_returns$returns, 2, function(x) {
+  annualized_return <- Return.annualized(x)
+  max_drawdown <- maxDrawdown(x)
+  annualized_return / max_drawdown
+})
+
+
+CVaR(p.returns.nb, method = "historical")
+VaR(p.returns.nb, method = "historical")
+```
+
+
+
 

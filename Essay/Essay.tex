@@ -293,23 +293,22 @@ Maximum Diversification Portfolio (MDP). These approaches focus on risk,
 often measured as variance, and aim to optimize either expected returns
 or risk minimization (\citeproc{ref-choueifaty2008towards}{Choueifaty,
 2008}; \citeproc{ref-e5a1bb8f-41b7-35c6-95cd-8b366d3e99bc}{Markowitz,
-1952}).
-
-However, an alternative methodology was introduced by Ray Dalio of
-Bridgewater Associates in 1996 with the ``All-Weather Fund,'' designed
-to perform well across all economic conditions and first assessed
-academically by Qian \& others (\citeproc{ref-qian2005risk}{2005}). This
-fund employs the risk parity approach (RPP), where assets contribute
-equally to the portfolio's overall risk, emphasizing diversification
-over maximizing returns or minimizing risk (Maillard, Roncalli \&
-Tiletche (\citeproc{ref-maillard2010properties}{2010})).
-
-The RPP approach has demonstrated robust performance in various studies
-(Maillard \emph{et al.} (\citeproc{ref-maillard2010properties}{2010});
-Chaves, Hsu, Li \& Shakernia (\citeproc{ref-chaves2011risk}{2011});
-Choi, Kim \& Kim (\citeproc{ref-choi2024diversified}{2024})). However,
-most research focuses on portfolios composed of assets from developed
-markets, which typically exhibit lower volatility
+1952}). However, an alternative methodology was introduced by Ray Dalio
+of Bridgewater Associates in 1996 (
+(\citeproc{ref-bridgewater-2020}{2020})) with the ``All-Weather Fund,''
+designed to perform well across all economic conditions and first
+assessed academically by Qian \& others
+(\citeproc{ref-qian2005risk}{2005}). This fund employs the risk parity
+approach (RPP), where assets contribute equally to the portfolio's
+overall risk, emphasizing diversification over maximizing returns or
+minimizing risk (Maillard, Roncalli \& Tiletche
+(\citeproc{ref-maillard2010properties}{2010})). The RPP approach has
+demonstrated robust performance in various studies (Maillard \emph{et
+al.} (\citeproc{ref-maillard2010properties}{2010}); Chaves, Hsu, Li \&
+Shakernia (\citeproc{ref-chaves2011risk}{2011}); Choi, Kim \& Kim
+(\citeproc{ref-choi2024diversified}{2024})). However, most research
+focuses on portfolios composed of assets from developed markets, which
+typically exhibit lower volatility
 (\citeproc{ref-loayza2007macroeconomic}{Loayza, Ranciere, Serven \&
 Ventura, 2007}). To explore its applicability in more volatile
 environments, this paper investigates the performance of an RPP
@@ -333,17 +332,17 @@ research.
 
 \section{Theory}\label{theory}
 
-Risk Parity Portfolios (RPPs) offer an alternative approach to
-traditional portfolio construction by emphasizing equal risk
-contributions from all assets in a portfolio (Roncalli
-(\citeproc{ref-roncalli2013introduction}{2013})). This concept diverges
-from the mean-variance optimization framework of Modern Portfolio Theory
-(MPT), which focuses on maximizing returns for a given level of risk or
-minimizing risk for a desired return level. Instead, RPPs aim to achieve
-balance by allocating portfolio weights such that each asset contributes
-equally to the overall portfolio risk
-(\citeproc{ref-asness2012leverage}{Asness, Frazzini \& Pedersen, 2012};
-\citeproc{ref-maillard2010properties}{Maillard \emph{et al.}, 2010}).
+RPPs offer an alternative approach to traditional portfolio construction
+by emphasizing equal risk contributions from all assets in a portfolio
+(Roncalli (\citeproc{ref-roncalli2013introduction}{2013})). This concept
+diverges from the mean-variance optimization framework of MPT, which
+focuses on maximizing returns for a given level of risk or minimizing
+risk for a desired return level. RPPs are designed to achieve
+equilibrium by allocating portfolio weights in a manner that ensures
+each asset contributes an equal proportion to the overall portfolio
+risk. (\citeproc{ref-asness2012leverage}{Asness, Frazzini \& Pedersen,
+2012}; \citeproc{ref-maillard2010properties}{Maillard \emph{et al.},
+2010}).
 
 \subsection{Principles of Risk Parity}\label{principles-of-risk-parity}
 
@@ -358,14 +357,12 @@ composition, such as weight limits for specific assets or industries.
 However, these thresholds are based on subjective human estimations,
 leading to variability in portfolio performance
 (\citeproc{ref-hurst2010understanding}{Hurst, Johnson \& Ooi, 2010}).
-Risk parity, by contrast, avoids such concentration by equalizing
-marginal risk contributions, ensuring that no single asset
-disproportionately influences the portfolio's performance.
-
-The mathematical foundation of RPPs involves calculating the marginal
-risk contribution of each asset and iteratively adjusting the weights
-until these contributions are equalized. This process is mathematically
-expressed as:
+RPPs, by contrast, avoids such concentration by equalizing marginal risk
+contributions, ensuring that no single asset disproportionately
+influences the portfolio's performance. The mathematical foundation of
+RPPs involves calculating the marginal risk contribution of each asset
+and iteratively adjusting the weights until these contributions are
+equalized. This process is mathematically expressed as:
 
 \begin{equation}
 RC_i = \frac{\sigma_p}{n}, \quad \forall i
@@ -403,11 +400,10 @@ market conditions (Hurst \emph{et al.}
 (\citeproc{ref-hurst2010understanding}{2010})). Additionally, their
 emphasis on risk balance reduces portfolio sensitivity to individual
 asset performance, thereby enhancing resilience (Costa \& Kwon
-(\citeproc{ref-costa2022data}{2022})).
-
-However, RPPs are not without limitations. The assumption of equal risk
-contributions can result in overexposure to low-volatility assets, which
-may fail to deliver adequate returns, especially in rising markets
+(\citeproc{ref-costa2022data}{2022})). However, RPPs are not without
+limitations. The assumption of equal risk contributions can result in
+overexposure to low-volatility assets, which may fail to deliver
+adequate returns, especially in rising markets
 (\citeproc{ref-maillard2010properties}{Maillard \emph{et al.}, 2010}).
 Moreover, while RPPs are designed to perform across all economic
 regimes, they may fail during structural breaks or extreme shocks, such
@@ -417,7 +413,7 @@ portfolios (\citeproc{ref-james2023semi}{James, Menzies \& Chan, 2023}).
 
 \subsection{Empirical Evidence}\label{empirical-evidence}
 
-Empirical research supports the efficacy of the risk parity approach in
+Empirical research supports the efficacy of the RPP approach in
 achieving superior risk-adjusted returns. For example, Asness \emph{et
 al.} (\citeproc{ref-asness2012leverage}{2012}) found that RPPs
 consistently outperformed traditional asset allocation strategies in
@@ -427,21 +423,19 @@ lower drawdowns and better performance during economic downturns,
 underscoring their utility as an all-weather strategy. Maillard \emph{et
 al.} (\citeproc{ref-maillard2010properties}{2010}) showed that RPPs tend
 to perform well in various economic environments due to their inherent
-diversification.
-
-While much of the existing literature focuses on developed markets,
-emerging markets present unique challenges and opportunities. Common
-characteristics of emerging market assets include higher volatility,
-lower liquidity, and greater exposure to macroeconomic shocks.
+diversification. While much of the existing literature focuses on
+developed markets, emerging markets present unique challenges and
+opportunities. Common characteristics of emerging market assets include
+higher volatility, lower liquidity, and greater exposure to
+macroeconomic shocks.
 
 \section{Methodology}\label{methodology}
 
-The performance of the Risk Parity Portfolio (RPP) will be assessed by
-comparing it to two other risk-based portfolio construction methods: the
-Minimum Variance Portfolio (MVP) and the Maximum Diversification
-Portfolio (MDP). The construction of these portfolios, the data used,
-and the methods employed for performance evaluation will be described in
-the following subsections.
+The performance of RPPs will be assessed by comparing it to two other
+risk-based portfolio construction methods: the MVP and the MDP. The
+construction of these portfolios, the data used, and the methods
+employed for performance evaluation will be described in the following
+subsections.
 
 \subsection{Data}\label{data}
 
@@ -503,8 +497,7 @@ the covariance matrix of asset returns and portfolio weights:
 \end{equation}
 
 The equation represents the portfolio variance, the vector of portfolio
-weights, and the covariance matrix of asset returns.
-
+weights, and the covariance matrix of asset returns.\\
 The MDP maximizes the diversification ratio, which balances the weighted
 average of individual asset volatilities with the portfolio's total
 risk:
@@ -522,11 +515,9 @@ portfolio variance, often leading to concentrated allocations in
 low-risk assets and high sensitivity to asset correlations. The MDP, on
 the other hand, maximizes the diversification ratio by allocating more
 weight to uncorrelated, high-volatility assets, thereby enhancing
-diversification.
-
-The shared objective of risk minimization, combined with their
-independence from expected returns, makes the MVP and MDP suitable
-benchmarks for assessing the performance of the RPP..
+diversification. The shared objective of risk minimization, combined
+with their independence from expected returns, makes the MVP and MDP
+suitable benchmarks for assessing the performance of the RPP..
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -570,9 +561,9 @@ consistency over time.
 \hline
   & MVP & RPP w/o Bonds & RPP & MDP\\
 \hline
-Cumulative Return & 5.813162 & 6.9217365 & 2.9677804 & 9.3588220\\
+Cumulative Return & 5.813162 & 6.9217365 & 2.9677804 & 9.5520638\\
 \hline
-Annualized Return & 0.135360 & 0.1467405 & 0.0954672 & 0.1672719\\
+Annualized Return & 0.135360 & 0.1467405 & 0.0954672 & 0.1687001\\
 \hline
 \end{tabular}
 \end{table}
@@ -658,19 +649,19 @@ effective portfolio across these measures.
 \hline
   & MVP & RPP w/o Bonds & RPP & MDP\\
 \hline
-Sterling ratio & 0.2640 & 0.2944 & 0.2376 & 0.3592\\
+Sterling ratio & 0.2640 & 0.2944 & 0.2376 & 0.3625\\
 \hline
-Calmar ratio & 0.3280 & 0.3683 & 0.3162 & 0.4575\\
+Calmar ratio & 0.3280 & 0.3683 & 0.3162 & 0.4617\\
 \hline
-Burke ratio & 0.0903 & 0.0990 & 0.0140 & 0.1529\\
+Burke ratio & 0.0903 & 0.0990 & 0.0140 & 0.1532\\
 \hline
-Pain index & 0.0657 & 0.0520 & 0.0457 & 0.0534\\
+Pain index & 0.0657 & 0.0520 & 0.0457 & 0.0532\\
 \hline
 Ulcer index & 0.1125 & 0.0904 & 0.0757 & 0.1018\\
 \hline
-Pain ratio & 0.6942 & 1.0960 & 0.1250 & 1.4514\\
+Pain ratio & 0.6942 & 1.0960 & 0.1250 & 1.4840\\
 \hline
-Martin ratio & 0.4052 & 0.6304 & 0.0755 & 0.7617\\
+Martin ratio & 0.4052 & 0.6304 & 0.0755 & 0.7757\\
 \hline
 \end{tabular}
 \end{table}
@@ -723,13 +714,13 @@ less efficient than RPP w/o Bonds in managing downside risk.
 \hline
   & MVP & RPP w/o Bonds & RPP & MDP\\
 \hline
-StdDev Sharpe (Rf=9.5\%, p=95\%): & -11.911931 & -10.791299 & -15.497496 & -11.826960\\
+StdDev Sharpe (Rf=9.5\%, p=95\%): & -11.911931 & -10.791299 & -15.497496 & -11.825879\\
 \hline
-VaR Sharpe (Rf=9.5\%, p=95\%): & -8.190001 & -7.082659 & -9.669357 & -7.941155\\
+VaR Sharpe (Rf=9.5\%, p=95\%): & -8.190001 & -7.082659 & -9.669357 & -7.947367\\
 \hline
-ES Sharpe (Rf=9.5\%, p=95\%): & -4.003934 & -3.050884 & -3.666896 & -3.535024\\
+ES Sharpe (Rf=9.5\%, p=95\%): & -4.003934 & -3.050884 & -3.666896 & -3.509594\\
 \hline
-SemiSD Sharpe (Rf=9.5\%, p=95\%): & -11.316888 & -10.336831 & -14.644187 & -11.411243\\
+SemiSD Sharpe (Rf=9.5\%, p=95\%): & -11.316888 & -10.336831 & -14.644187 & -11.396951\\
 \hline
 \end{tabular}
 \end{table}
@@ -746,7 +737,7 @@ by emphasizing the balance between downside risk and potential gains.
 The Sortino Ratio, which measures returns relative to downside risk,
 reveals that all portfolios perform similarly, with slight differences
 around -0.996. This indicates uniformly weak performance when evaluated
-against the minimum acceptable return (MAR) of 8.957\%.
+against the MAR of 8.957\%.
 
 Conditional drawdown at the 5\% confidence level highlights the Most
 Diversified portfolio as the best performer (0.0413), followed closely
@@ -780,15 +771,15 @@ evaluation period.
 \hline
   & MVP & RPP w/o Bonds & RPP & MDP\\
 \hline
-Sortino Ratio (MAR = 8.957\%) & -0.9960579 & -0.9952025 & -0.9976658 & -0.9960008\\
+Sortino Ratio (MAR = 8.957\%) & -0.9960579 & -0.9952025 & -0.9976658 & -0.9960000\\
 \hline
-Conditional Drawdown 5\% & 0.0382246 & 0.0400242 & 0.0282992 & 0.0432241\\
+Conditional Drawdown 5\% & 0.0382246 & 0.0400242 & 0.0282992 & 0.0397635\\
 \hline
 Upside Potential (MAR = 9\%) & NaN & NaN & NaN & NaN\\
 \hline
-ES & -0.0183472 & -0.0201133 & -0.0142241 & -0.0178530\\
+ES & -0.0183472 & -0.0201133 & -0.0142241 & -0.0178437\\
 \hline
-VaR & -0.0106980 & -0.0123244 & -0.0085753 & -0.0106023\\
+VaR & -0.0106980 & -0.0123244 & -0.0085753 & -0.0106355\\
 \hline
 \end{tabular}
 \end{table}
@@ -841,11 +832,11 @@ RPP\_nb & Moderate Growth & 0.0005836 & 0.0070822 & 0.0824036\\
 \hline
 RPP\_nb & Recession & 0.0007127 & 0.0147488 & 0.0483259\\
 \hline
-MD & High Growth & 0.0003664 & 0.0079010 & 0.0463753\\
+MD & High Growth & 0.0003839 & 0.0078744 & 0.0487532\\
 \hline
-MD & Moderate Growth & 0.0006768 & 0.0065835 & 0.1027994\\
+MD & Moderate Growth & 0.0006833 & 0.0065833 & 0.1037972\\
 \hline
-MD & Recession & 0.0010394 & 0.0135489 & 0.0767113\\
+MD & Recession & 0.0010285 & 0.0135928 & 0.0756677\\
 \hline
 \end{tabular}
 \end{table}
@@ -886,43 +877,16 @@ downside risk, their underperformance in other areas raises questions
 about their feasibility as a robust investment strategy in the South
 African context.
 
-\section{Appendix}\label{appendix}
-
-\begin{figure}[H]
-
-{\centering \includegraphics{Essay_files/figure-latex/Figure 4-1} 
-
-}
-
-\caption{Drawdowns \label{Figure4}}\label{fig:Figure 4-1}
-\end{figure}
-\begin{figure}[H]
-
-{\centering \includegraphics{Essay_files/figure-latex/Figure 4-2} 
-
-}
-
-\caption{Drawdowns \label{Figure4}}\label{fig:Figure 4-2}
-\end{figure}
-\begin{figure}[H]
-
-{\centering \includegraphics{Essay_files/figure-latex/Figure 4-3} 
-
-}
-
-\caption{Drawdowns \label{Figure4}}\label{fig:Figure 4-3}
-\end{figure}
-\begin{figure}[H]
-
-{\centering \includegraphics{Essay_files/figure-latex/Figure 4-4} 
-
-}
-
-\caption{Drawdowns \label{Figure4}}\label{fig:Figure 4-4}
-\end{figure}
+\section*{References}\label{references}
+\addcontentsline{toc}{section}{References}
 
 \phantomsection\label{refs}
 \begin{CSLReferences}{1}{1}
+\bibitem[\citeproctext]{ref-bridgewater-2020}
+Bridgewater. 2020. \emph{The all weather story}. {[}Online{]},
+Available:
+\url{https://www.bridgewater.com/research-and-insights/the-all-weather-story}.
+
 \bibitem[\citeproctext]{ref-asness2012leverage}
 Asness, C.S., Frazzini, A. \& Pedersen, L.H. 2012. Leverage aversion and
 risk parity. \emph{Financial Analysts Journal}. 68(1):47--59.

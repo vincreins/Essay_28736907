@@ -18,13 +18,12 @@ This repository contains resources and analyses for assessing the applicability 
 The study utilizes a comprehensive set of performance measures:  
 - Risk-adjusted returns: Sharpe, Sortino, Sterling, and Calmar ratios.  
 - Downside risk: Value at Risk (VaR), Conditional VaR, and drawdown metrics.  
-- Other measures: Alpha, Beta, and Information Ratio (compared to benchmarks).  
 
 **Dataset**  
-The portfolio construction leverages data on South African stocks and government bond yields (2- and 10-year maturities) covering 2007 to 2024. The dataset spans diverse market conditions, including the Global Financial Crisis and the COVID-19 pandemic.  
+The portfolio construction uses data on South African stocks and government bond yields (2- and 10-year maturities) covering 2007 to 2024. The dataset spans diverse market conditions, including the Global Financial Crisis and the COVID-19 pandemic.  
 
 **Methodology**  
-1. Construct portfolios using RPP, MVP, and MDP strategies.  
+1. Construct portfolios using RPP, MVP, and MDP methodologies.  
 2. Benchmark portfolio performance using downside risk and risk-adjusted return metrics.  
 3. Evaluate portfolio performance during distinct economic regimes.  
 

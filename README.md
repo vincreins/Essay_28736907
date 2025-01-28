@@ -84,7 +84,7 @@ The MDP function calculates portfolio weights for the MDP strategy. This functio
 The returns for each portfolio are then calculated using the Return.portfolio package from the Performance Analytics package.
 
 ```{r}
-weights_mv <- rolling_min_vol_portfolio_weights(LCL_filtered, 252, 63)
+weights_mv <- min_vol_portfolio_weights(LCL_filtered, 252, 63)
 returns.mv <- Return.portfolio(LCL_filtered, weights = weights_mv, verbose = TRUE)
 weights_md <- most_diversified_weights(LCL_filtered, window_size = 252, rebalance_interval = 63) 
 returns.md <- Return.portfolio(LCL_filtered, weights = weights_md, verbose = TRUE)
@@ -98,10 +98,14 @@ Bond_return_10 <- Bond_return(BondYields_10Y_SA, "BondYield_10", 10)
 Bond_return_2 <- Bond_return(BondYields_2Y_SA, "BondYield_2", 2)
 ```
 
+After merging the bond and stock returns the covariance matrix is calculated.
+
 ```{r}
 LCL_Bond <- merge.xts(Bond_return_10, Bond_return_2, LCL_filtered, join = "inner")
 Sigma <- cov(LCL_Bond)
 ```
+
+The riskParityPortfolio function from the same named package will be used to determine the weights for the RPP. This function is embedded in the RollingRiskParity function which rebalances the portfolio every three months. 
 
 ```{r}
 portfolio.parity <- riskParityPortfolio(Sigma)
@@ -110,6 +114,8 @@ rWindows<-rollingWindows(LCL_Bond, period="12m",
 parity.weights <- RollingRiskParity(rWindows$from@Data, rWindows$to@Data, LCL_Bond) %>% na.omit()
 parity.returns <- Return.portfolio(LCL_Bond, weights=parity.weights,verbose=TRUE)
 ```
+
+The same steps are repeated for the portfolio without bonds. For further analysis all portfolios are then merged to one data frame.
 
 ```{r}
 Sigma_nb <- cov(LCL_filtered)
@@ -122,6 +128,8 @@ p.returns.nb <- merge.xts(returns.mv$returns, parity.returns.nb$returns, parity.
 names(p.returns.nb)<-c("MVP", "RPP w/o Bonds", "RPP", "MDP")
 ```
 
+For a first impression on the performance, the cumulative returns and the annualized returns are calculated.
+
 ```{r}
 PerformanceAnalytics::chart.CumReturns(p.returns.nb, colorset=rich6equal,
                           lwd=1, cex.legend = 0.5, event.labels = TRUE, main = "", legend.loc = "topleft")
@@ -132,6 +140,8 @@ chart.RollingPerformance(p.returns.nb, width = 252, colorset=rich6equal,
                           lwd=1, cex.legend = 0.5, event.labels = TRUE, main = "", legend.loc = "top")
 ```
 
+To quantify the results they are then calculated and the numeric values of both are displayed in a table.
+
 ```{r}
 bind_rows(
   as.data.frame(Return.cumulative(p.returns.nb)),
@@ -140,10 +150,14 @@ bind_rows(
     kable_styling()
 ```
 
+Since the focus of the portfolios is to minimize risk, the drawdowns are very interesting to visually compare how the portfolios behave when the financial markets are falling.
+
 ```{r}
 chart.Drawdown(p.returns.nb, colorset=rich6equal,
                           lwd=1, cex.legend = 0.5, event.labels = TRUE, main = "", legend.loc = "bottom")
 ```
+
+To get more insights, in addition to the chart a table with different drawdown measures such as the Sterling, Calmar, Burke, Pain, and Martin Ratios, along with the Pain Index and the Ulcer Index, will be calculated.
 
 ```{r}
 table.DrawdownsRatio(p.returns.nb, Rf = 0.08975) %>%
@@ -151,11 +165,23 @@ table.DrawdownsRatio(p.returns.nb, Rf = 0.08975) %>%
   kable_styling()
 ```
 
+To compare the downside risk, different Sharpe Ratios will be calculated.
+
+```{r}
+SharpeRatio(p.returns.nb, Rf = 0.095) %>% 
+    kbl(caption = "Sharpe Ratios", label = "sharpe-ratios")  %>% 
+    kable_styling()
+```
+
+The calculate_ratios function filters bond yield data to include only observations after 2007 and determines the risk-free rate as the average 10-year bond yield. It computes the Sortino Ratio for risk-adjusted returns, Conditional Drawdown at Risk (CDD) at a 95% confidence level, the Upside Potential Ratio for assessing return potential relative to downside risk, Conditional Value at Risk (CVaR) for average losses beyond the Value at Risk, and Value at Risk (VaR) for maximum expected losses. The results are returned as a data frame of calculated ratios.
+
 ```{r}
 calculate_ratios(p.returns.nb, BondYields_10Y_SA) %>% 
     kbl(caption = "Downside and Opportunity-based Performance Metrics", label = "downside-metrics") %>%
     kable_styling()
 ```
+
+To evaluate the performance of RPPs across various economic environments, their performance will be analyzed during periods of recession, moderate growth, and high growth. The economic_regime function classifies years based on real GDP growth rates, while the regime_return function integrates the output of the economic_regime function and computes three performance metrics: return, volatility, and Sharpe ratio.
 
 ```{r}
 return_parity <- return_data(parity.returns)

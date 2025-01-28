@@ -1,4 +1,4 @@
-rolling_min_vol_portfolio_weights <- function(returns, window_size = 252, rebalance_interval = 63, portfolio) {
+min_vol_portfolio_weights <- function(returns, window_size = 252, rebalance_interval = 63, portfolio) {
     returns <- returns
     portfolio <- portfolio.spec(assets = colnames(returns))
     portfolio <- add.constraint(portfolio, type = "full_investment")

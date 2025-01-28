@@ -46,10 +46,11 @@ library(tidyverse)
 list.files('code/', full.names = T, recursive = T) %>% .[grepl('.R', .)] %>% as.list() %>% walk(~source(.))
 ```
 
-```{r}
+Loading the necessary libraries and data sets. 
+```{r, warning=FALSE}
 library(PerformanceAnalytics)
 library(riskParityPortfolio)
-library(fPortfolio)
+#library(fPortfolio)
 library(dplyr)
 library(tidyr)
 library(xts)
@@ -62,17 +63,25 @@ library(ROI)
 library(ROI.plugin.quadprog)
 library(zoo)
 library(DEoptim)
-library(doParallel)
-library(foreach)
 LCL_Stock_Returns <- read_rds("/Users/x/Downloads/Data_2024/LCL_Stock_Returns.rds")
 BondYields_10Y_SA <- read_rds("/Users/x/Downloads/Data_2024/BondYields_10Y_SA.rds")
 BondYields_2Y_SA <- read_rds("/Users/x/Downloads/Data_2024/BondYields_2Y_SA.rds")
 SA_Growth <- read_csv2("/Users/x/Downloads/SA_Growth.csv", show_col_types = FALSE)
 ```
 
+In a first step, the filter_stock_function will be applied to the LCL_Stock_Returns dataset. The function filters and transforms stock data by removing weekends, reshaping data into a wide format with tickers as columns, dropping columns with only missing values or constant values, and converting the result into an xts time-series object.
+
 ```{r}
 LCL_filtered <- filter_stock_function(LCL_Stock_Returns)
 ```
+
+In the following chunk, the weights and returns for the MVP and the MDP are calculated. The weights for the MVP are calculated using the rolling_min_vol_portfolio_weights function and for the MDP the most_diversified_weights function. 
+
+The MVP function calculates portfolio weights for a rolling minimum volatility strategy. The function optimizes portfolio weights over a specified window of historical returns window_size and adjusts these weights at regular intervals defined by the rebalance_interval. Key constraints ensure the portfolio remains fully invested, uses only long positions, and individual asset weights are bounded between 0 and 1. At each rebalance date, the portfolio optimization uses the most recent window_size days of data, employing a variance minimization objective. The resulting weights are normalized, stored as an xts time-series object, and validated to ensure they are non-negative and sum to one for every rebalancing period.
+
+The MDP function calculates portfolio weights for the MDP strategy. This function optimizes weights to maximize the diversification ratio, which is the ratio of the weighted sum of asset volatilities to the portfolio's overall volatility. The portfolio is rebalanced at regular intervals (rebalance_interval). Asset weights are constrained to be non-negative and bounded between 0 and 1. Optimization is performed using the Differential Evolution (DEoptim) algorithm, with covariance and standard deviation of asset returns used as inputs. 
+
+The returns for each portfolio are then calculated using the Return.portfolio package from the Performance Analytics package.
 
 ```{r}
 weights_mv <- rolling_min_vol_portfolio_weights(LCL_filtered, 252, 63)
@@ -80,6 +89,9 @@ returns.mv <- Return.portfolio(LCL_filtered, weights = weights_mv, verbose = TRU
 weights_md <- most_diversified_weights(LCL_filtered, window_size = 252, rebalance_interval = 63) 
 returns.md <- Return.portfolio(LCL_filtered, weights = weights_md, verbose = TRUE)
 ```
+
+In order to include the bonds in one of the portfolios, the returns of the bonds has to be calculated. THis is done using the Bond_return function. Calculates bond returns based on yield and maturity. The function processes the input data by selecting relevant columns, renaming the yield column, and calculating bond prices using the formula 
+$$ \text{BondPrice} = \frac{1}{(1 + \text{Yield}/100)^\text{Maturity}} . $$
 
 ```{r}
 Bond_return_10 <- Bond_return(BondYields_10Y_SA, "BondYield_10", 10)
@@ -162,7 +174,6 @@ combine_regime_results(results_mv, results_RPP, results_RPP_nb, results_md) %>%
     kbl(caption = "Performance at Different Economic States", label = "regime") %>% 
     kable_styling()
 ```
-
 
 
 

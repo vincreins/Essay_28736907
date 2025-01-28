@@ -245,7 +245,7 @@ The shared objective of risk minimization, combined with their independence from
 ```{r, warning=FALSE}
 
 LCL_filtered <- filter_stock_function(LCL_Stock_Returns)
-weights_mv <- rolling_min_vol_portfolio_weights(LCL_filtered, 252, 63)
+weights_mv <- min_vol_portfolio_weights(LCL_filtered, 252, 63)
 returns.mv <- Return.portfolio(LCL_filtered, weights = weights_mv, verbose = TRUE)
 weights_md <- most_diversified_weights(LCL_filtered, window_size = 252, rebalance_interval = 63) 
 returns.md <- Return.portfolio(LCL_filtered, weights = weights_md, verbose = TRUE)

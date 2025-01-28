@@ -4,39 +4,38 @@ output:
     variant: markdown_github
 ---
 
-### Risk Parity Portfolios (RPPs): A Comparative Study in South Africa  
+### Risk Parity Portfolios (RPPs): A Comparative Study in South Africa
 
-#### Introduction  
-Risk parity portfolios (RPPs) aim to equalize the risk contribution of each asset within a portfolio. This strategy contrasts with modern portfolio theory (MPT)-based methods, such as the mean-variance approach, which rely on assumptions about expected returns and variance. RPPs bypass the need for return forecasts, instead emphasizing risk estimates, particularly volatility and correlations.  
+**Overview**  
+This repository contains resources and analyses for assessing the applicability of Risk Parity Portfolios (RPPs) in South African markets. The study compares RPPs to Minimum Variance Portfolios (MVPs) and Maximum Diversification Portfolios (MDPs) with a focus on risk-adjusted performance, economic regime sensitivity, and robustness across different market conditions.
 
-Unlike MPT, which focuses on either maximizing returns or minimizing variance, RPPs prioritize explicit risk allocation. This research investigates the performance of RPPs relative to South African index funds, posing the key question:  
+**Research Goals**  
+1. Evaluate the performance of RPPs relative to MVPs and MDPs.  
+2. Investigate RPP viability under South African economic conditions from 2007 to 2024.  
+3. Analyze RPPs' adaptability across different economic regimes (high growth, moderate growth, and recession).  
 
-**How can the risk parity approach be effectively implemented to construct a diversified portfolio of South African assets, and how does it compare to traditional asset allocation strategies in terms of risk-adjusted returns?**  
+**Core Metrics**  
+The study utilizes a comprehensive set of performance measures:  
+- Risk-adjusted returns: Sharpe, Sortino, Sterling, and Calmar ratios.  
+- Downside risk: Value at Risk (VaR), Conditional VaR, and drawdown metrics.  
+- Other measures: Alpha, Beta, and Information Ratio (compared to benchmarks).  
 
-#### Focus on Risk-Adjusted Returns  
-The study aims to evaluate risk-adjusted returns, a core objective of RPPs. To achieve this, an expanded set of performance metrics will be analyzed:  
-- Sharpe ratio  
-- Sterling ratio  
-- Alpha and Beta  
-- Sortino ratio  
-- Maximum drawdown  
-- Calmar ratio  
-- Information ratio (vs. a relevant benchmark)  
+**Dataset**  
+The portfolio construction leverages data on South African stocks and government bond yields (2- and 10-year maturities) covering 2007 to 2024. The dataset spans diverse market conditions, including the Global Financial Crisis and the COVID-19 pandemic.  
 
-#### Asset Selection  
-For constructing a South African RPP, a diverse range of traded assets will be included:  
-- Stocks listed on the Johannesburg Stock Exchange  
-- South African government bond yields (2-year and 10-year maturities)  
+**Methodology**  
+1. Construct portfolios using RPP, MVP, and MDP strategies.  
+2. Benchmark portfolio performance using downside risk and risk-adjusted return metrics.  
+3. Evaluate portfolio performance during distinct economic regimes.  
 
-#### Incorporating Economic Regimes  
-To enhance analytical rigor, portfolio performance will be examined across South Africa’s distinct economic regimes, such as:  
-- Periods of high and low economic growth  
-- Periods of high and low inflation  
+**Key Findings**  
+1. **RPP Strengths**: Effective in minimizing short-term downside risk; robust in downturns.  
+2. **RPP Weaknesses**: Underperformance in cumulative and risk-adjusted returns relative to MVPs and MDPs, especially in high-growth conditions.  
+3. Economic Regime Analysis: RPPs demonstrated varying performance, with significant challenges during recessions.  
 
-This evaluation will illuminate the adaptability of risk parity strategies compared to traditional asset allocation methods under varying market conditions.  
+**Conclusion**  
+This study highlights the trade-offs inherent in leveraging RPPs for portfolio diversification in South Africa. While RPPs offer robust risk management, their returns are less competitive compared to MVPs and MDPs.  
 
-#### Conclusion  
-By integrating additional performance metrics and analyzing economic regimes, this study will deliver a thorough evaluation of the risk parity approach within the South African context. The findings aim to deepen understanding of RPP effectiveness in constructing diversified portfolios and their comparative performance against traditional strategies under diverse market scenarios.  
 
 ```{r}
 

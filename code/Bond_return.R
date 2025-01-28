@@ -1,6 +1,6 @@
 Bond_return <- function(data, Yield, Maturity) {
     data %>%
-        #filter(!lubridate::wday(date) %in% c(1, 7)) %>%
+        filter(!lubridate::wday(date) %in% c(1, 7)) %>%
         select(date, Ticker, !!sym(Yield)) %>%
         rename(Yield = !!sym(Yield)) %>%
         mutate(

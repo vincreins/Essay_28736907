@@ -1,16 +1,22 @@
-library(knitr)
+calculate_ratios <- function(p_returns, bond_yields) {
+    bond_yields$date <- as.Date(bond_yields$date)
+    filtered_bond_yields <- subset(bond_yields, date > as.Date("2007-01-01"))
+    risk_f <- mean(filtered_bond_yields$BondYield_10) / 100
+    sortino_ratio <- SortinoRatio(p_returns, MAR = risk_f)
+    cdd <- CDD(p_returns, p = 0.95)
+    upside_potential_ratio <- UpsidePotentialRatio(p_returns, MAR = risk_f)
+    cvar <- CVaR(p.returns.nb, method = "historical")
+    var <- VaR(p.returns.nb, method = "historical")
 
-calculate_ratios_table <- function(p_returns, bond_yields, mar = 0.053) {
-    risk_f <- mean(bond_yields) / 100
-    ratios <- data.frame(
-        Metric = c("Sharpe Ratio", "Sortino Ratio", "CDD", "Upside Potential Ratio"),
-        Value = c(
-            SharpeRatio(p_returns, Rf = risk_f),
-            SortinoRatio(p_returns, MAR = mar),
-            CDD(p_returns, Rf = risk_f),
-            UpsidePotentialRatio(p_returns, MAR = mar)
-        )
+    ratios_matrix <- rbind(
+        "SortinoRatio" = sortino_ratio,
+        "CDD" = cdd,
+        "UpsidePotentialRatio" = upside_potential_ratio,
+        "CVaR" = cvar,
+        "VaR" = var
     )
 
-    kable(ratios, format = "markdown", col.names = c("Metric", "Value"))
+    ratios_df <- as.data.frame(ratios_matrix)
+
+    return(ratios_df)
 }

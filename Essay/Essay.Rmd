@@ -3,7 +3,7 @@
 # Remove comments and add values where applicable.
 # The descriptions below should be self-explanatory
 
-title: "Helping You Write Academic Papers in R using Texevier"
+title: "Assessing the Viability of Risk Parity Portfolios in South African Markets: A Comparative Analysis of Risk-Adjusted Performance"
 #subtitle: "This will appear as Right Header"
 
 documentclass: "elsarticle"
@@ -25,23 +25,23 @@ Thesis_FP: FALSE
 # --------- Front Page
 # Comment: ----- Follow this pattern for up to 5 authors
 AddTitle: TRUE # Use FALSE when submitting to peer reviewed platform. This will remove author names.
-Author1: "Jane Doe^[__Contributions:__  \\newline _The authors would like to thank no institution for money donated to this project. Thank you sincerely._]"  # First Author - note the thanks message displayed as an italic footnote of first page.
-Ref1: "Some Institution, Cape Town, South Africa" # First Author's Affiliation
-Email1: "nfkatzke\\@gmail.com" # First Author's Email address
+Author1: "Vincent Reinshagen"  # First Author - note the thanks message displayed as an italic footnote of first page.
+Ref1: "Stellenbosch University, Stellenbosch, South Africa" # First Author's Affiliation
+Email1: "28736907\\@sun.ac.za" # First Author's Email address
 
-Author2: "John Smith"
-Ref2: "Some other Institution, Cape Town, South Africa"
-Email2: "John\\@gmail.com"
-CommonAffiliation_12: TRUE # If Author 1 and 2 have a common affiliation. Works with _13, _23, etc.
+#Author2: "John Smith"
+#Ref2: "Some other Institution, Cape Town, South Africa"
+#Email2: "John\\@gmail.com"
+#CommonAffiliation_12: TRUE # If Author 1 and 2 have a common affiliation. Works with _13, _23, etc.
 
-Author3: "John Doe"
-Email3: "Joe\\@gmail.com"
+# Author3: "John Doe"
+# Email3: "Joe\\@gmail.com"
 
-CorrespAuthor_1: TRUE  # If corresponding author is author 3, e.g., use CorrespAuthor_3: TRUE
+#CorrespAuthor_1: TRUE  # If corresponding author is author 3, e.g., use CorrespAuthor_3: TRUE
 
 # Comment out below to remove both. JEL Codes only given if keywords also given.
-keywords: "Multivariate GARCH \\sep Kalman Filter \\sep Copula" # Use \\sep to separate
-JELCodes: "L250 \\sep L100"
+# keywords: "Multivariate GARCH \\sep Kalman Filter \\sep Copula" # Use \\sep to separate
+# JELCodes: "L250 \\sep L100"
 
 # ----- Manage headers and footers:
 #BottomLFooter: $Title$
@@ -92,14 +92,14 @@ output:
     fig_width: 3.5 # Adjust default figure sizes. This can also be done in the chunks of the text.
     fig_height: 3.5
 abstract: |
-  Abstract to be written here. The abstract should not be too long and should provide the reader with a good understanding what you are writing about. Academic papers are not like novels where you keep the reader in suspense. To be effective in getting others to read your paper, be as open and concise about your findings here as possible. Ideally, upon reading your abstract, the reader should feel he / she must read your paper in entirety.
+  This study evaluates the applicability of Risk Parity Portfolios (RPP) in the South African market, comparing their performance to the Minimum Variance Portfolio (MVP) and Maximum Diversification Portfolio (MDP). Utilizing data from 2007 to 2024, the analysis examines risk-adjusted returns, drawdown metrics, and performance across economic regimes. While RPPs demonstrate robustness during downturns, their overall returns lag behind MVP and MDP, particularly in high-growth conditions. The findings highlight the trade-offs in leveraging RPPs for portfolio diversification in volatile markets, offering insights for investors seeking balanced risk allocation strategies.
 ---
 
 <!-- First: Set your default preferences for chunk options: -->
 
 <!-- If you want a chunk's code to be printed, set echo = TRUE. message = FALSE stops R printing ugly package loading details in your final paper too. I also suggest setting warning = FALSE and checking for warnings in R, else you might find ugly warnings in your paper. -->
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, warning=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.width = 6, fig.height = 5, fig.pos="H", fig.pos = 'H')
 # Note: Include = FALSE implies the code is executed, but not printed in your pdf.
 # warning and message = FALSE implies ugly messages and warnings are removed from your pdf.
@@ -108,11 +108,31 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.width 
 # Lets load in example data, and see how this can be stored and later called from your 'data' folder.
 if(!require("tidyverse")) install.packages("tidyverse")
 library(tidyverse)
-Example_data <- Texevier::Ex_Dat
+list.files('code/', full.names = T, recursive = T) %>% as.list() %>% walk(~source(.))
 
 # Notice that as you are working in a .Rproj file (I am assuming you are) - the relative paths of your directories start at your specified root.
 # This means that when working in a .Rproj file, you never need to use getwd() - it is assumed as your base root automatically.
-write_rds(Example_data, path = "data/Example_data.rds")
+library(PerformanceAnalytics)
+library(riskParityPortfolio)
+library(fPortfolio)
+library(dplyr)
+library(tidyr)
+library(xts)
+library(lubridate)
+library(kableExtra)
+library(RiskPortfolios)
+library(PortfolioAnalytics)
+library(PerformanceAnalytics)
+library(ROI)
+library(ROI.plugin.quadprog)
+library(zoo)
+library(DEoptim)
+library(doParallel)
+library(foreach)
+LCL_Stock_Returns <- read_rds("/Users/x/Downloads/Data_2024/LCL_Stock_Returns.rds")
+BondYields_10Y_SA <- read_rds("/Users/x/Downloads/Data_2024/BondYields_10Y_SA.rds")
+BondYields_2Y_SA <- read_rds("/Users/x/Downloads/Data_2024/BondYields_2Y_SA.rds")
+SA_Growth <- read_csv2("/Users/x/Downloads/SA_Growth.csv", show_col_types = FALSE)
 
 ```
 
@@ -123,169 +143,354 @@ write_rds(Example_data, path = "data/Example_data.rds")
 
 # Introduction \label{Introduction}
 
+Finding the balance between risk and return is a central challenge in portfolio construction. Traditional methods for addressing this issue are grounded in Modern Portfolio Theory (MPT), introduced by @e5a1bb8f-41b7-35c6-95cd-8b366d3e99bc, which provides frameworks such as the Minimum Variance Portfolio (MVP) and the Maximum Diversification Portfolio (MDP). These approaches focus on risk, often measured as variance, and aim to optimize either expected returns or risk minimization [@choueifaty2008towards; @e5a1bb8f-41b7-35c6-95cd-8b366d3e99bc].
+
+However, an alternative methodology was introduced by Ray Dalio of Bridgewater Associates in 1996 with the "All-Weather Fund," designed to perform well across all economic conditions and first assessed academically by @qian2005risk. This fund employs the risk parity approach (RPP), where assets contribute equally to the portfolio’s overall risk, emphasizing diversification over maximizing returns or minimizing risk (@maillard2010properties).
+
+The RPP approach has demonstrated robust performance in various studies (@maillard2010properties; @chaves2011risk; @choi2024diversified). However, most research focuses on portfolios composed of assets from developed markets, which typically exhibit lower volatility [@loayza2007macroeconomic]. To explore its applicability in more volatile environments, this paper investigates the performance of an RPP constructed from South African assets. The analysis compares the risk and return of the South African RPP to two commonly used risk-minimizing portfolios, the MVP and the MDP.
+
+This paper addresses the question: *How can the risk parity approach be effectively implemented to construct a diversified portfolio of South African assets, and how does it compare to traditional asset allocation strategies in terms of risk-adjusted returns?*
+
+To answer this question, the next section examines the theoretical foundations of RPPs, MVPs, and MDPs. The subsequent section elaborates on the methodology employed in this study, including the data used, the characteristics of the benchmark portfolios, and the performance measures. This is followed by an analysis of the results. Finally, the paper concludes with insights on the feasibility of applying the RPP approach to South African assets and outlines directions for future research.
 
 
-<!-- The following is a code chunk. It must have its own unique name (after the r), or no name. After the comma follows commands for R which are self-explanatory. By default, the code and messages will not be printed in your pdf, just the output: -->
+# Theory
 
-```{r Figure1,  warning =  FALSE, fig.align = 'center', fig.cap = "Caption Here \\label{Figure1}", fig.ext = 'png', fig.height = 3, fig.width = 6}
+Risk Parity Portfolios (RPPs) offer an alternative approach to traditional portfolio construction by emphasizing equal risk contributions from all assets in a portfolio (@roncalli2013introduction). This concept diverges from the mean-variance optimization framework of Modern Portfolio Theory (MPT), which focuses on maximizing returns for a given level of risk or minimizing risk for a desired return level. Instead, RPPs aim to achieve balance by allocating portfolio weights such that each asset contributes equally to the overall portfolio risk [@asness2012leverage; @maillard2010properties].
 
-ALSI <- read_rds("/Users/x/Documents/Uni/VWL/Stellenbosch/2. Semester/Fin/Data_24/ALSI.rds")
-LCL_Indices <- read_rds("/Users/x/Downloads/Data_2024/LCL_Indices.rds")
-LCL_Stock_Returns <- read_rds("/Users/x/Downloads/Data_2024/LCL_Stock_Returns.rds")
-BondYields_10Y_SA <- read_rds("/Users/x/Downloads/Data_2024/BondYields_10Y_SA.rds")
-BondYields_2Y_SA <- read_rds("/Users/x/Downloads/Data_2024/BondYields_2Y_SA.rds")
-SA_Growth <- read_csv2("/Users/x/Downloads/SA_Growth.csv")
+## Principles of Risk Parity
 
-```
+@qian2011risk highlights the importance of diversification in constructing robust portfolios, which is the core idea of RPPs. In MPT, high-return assets often dominate the portfolio due to their favorable expected risk-return trade-off. This dominance can lead to concentration in specific asset classes, reducing the benefits of diversification [@qian2011risk]. To address this issue, thresholds are often imposed on portfolio composition, such as weight limits for specific assets or industries. However, these thresholds are based on subjective human estimations, leading to variability in portfolio performance [@hurst2010understanding].
+Risk parity, by contrast, avoids such concentration by equalizing marginal risk contributions, ensuring that no single asset disproportionately influences the portfolio’s performance.
 
-Calculating returns of index fund
+The mathematical foundation of RPPs involves calculating the marginal risk contribution of each asset and iteratively adjusting the weights until these contributions are equalized. This process is mathematically expressed as:
 
-```{r}
+\begin{equation}
+RC_i = \frac{\sigma_p}{n}, \quad \forall i
+\end{equation}
+
+where RC denotes the risk contribution, which equals the ratio of the total portfolio standard deviation and the number of assets. The total portfolio risk is calculated as:
+
+\begin{equation}
+\sigma_p = \sqrt{\mathbf{w}^T \boldsymbol{\Sigma} \mathbf{w}}
+\end{equation}
+
+This formula aggregates individual asset risks and their covariances, weighted by portfolio allocation. The risk contribution of asset i is defined as the product of its portfolio weight w and its marginal risk contribution to the portfolio:
+
+\begin{equation}
+RC_i = w_i \cdot (\boldsymbol{\Sigma} \mathbf{w})_i 
+\end{equation}
+
+The optimization problem to achieve risk parity can then be formulated as:
+
+\begin{equation}
+\min_{\mathbf{w}}  \quad \sum_{i=1}^n \left( RC_i - \frac{\sigma_p}{n} \right)^2 
+\end{equation}
+
+## Advantages and Limitations
+
+One primary advantage of RPPs is their robustness across different market conditions (@hurst2010understanding). Additionally, their emphasis on risk balance reduces portfolio sensitivity to individual asset performance, thereby enhancing resilience (@costa2022data).
+
+However, RPPs are not without limitations. The assumption of equal risk contributions can result in overexposure to low-volatility assets, which may fail to deliver adequate returns, especially in rising markets [@maillard2010properties]. Moreover, while RPPs are designed to perform across all economic regimes, they may fail during structural breaks or extreme shocks, such as the Covid-19 pandemic [@stefanova-2020]. This limitation is also shared by other risk-minimizing portfolios [@james2023semi].
+
+## Empirical Evidence
+
+Empirical research supports the efficacy of the risk parity approach in achieving superior risk-adjusted returns. For example, @asness2012leverage found that RPPs consistently outperformed traditional asset allocation strategies in terms of Sharpe ratio. Similarly, @chow2014study demonstrated that RPPs exhibit lower drawdowns and better performance during economic downturns, underscoring their utility as an all-weather strategy. @maillard2010properties showed that RPPs tend to perform well in various economic environments due to their inherent diversification.
+
+While much of the existing literature focuses on developed markets, emerging markets present unique challenges and opportunities. Common characteristics of emerging market assets include higher volatility, lower liquidity, and greater exposure to macroeconomic shocks.
+
+# Methodology
+
+The performance of the Risk Parity Portfolio (RPP) will be assessed by comparing it to two other risk-based portfolio construction methods: the Minimum Variance Portfolio (MVP) and the Maximum Diversification Portfolio (MDP). The construction of these portfolios, the data used, and the methods employed for performance evaluation will be described in the following subsections.
+
+## Data
+
+The portfolio will be constructed using the LCL dataset, which contains a large share of stocks listed on the JSE stock exchange. The portfolio will cover a time frame from January 2007 to November 2024. This extended period includes varying economic conditions and two significant shocks: the World Financial Crisis and the Covid-19 pandemic. The nearly two-decade observation window provides a robust basis for assessing long-term performance.
+
+## Performance Measures
+
+Although portfolio objectives may vary, a key requirement is profitability. To evaluate this, cumulative returns will be calculated. However, given the limitations of cumulative returns—such as their failure to account for the time period over which returns are achieved—annualized returns will also be assessed. Annualized returns provide a time-normalized measure of growth, facilitating comparisons across investments with different time horizons.
+
+To evaluate risk-adjusted returns and compare the risk levels of the portfolios, both drawdown and downside risk measures will be used. Drawdown measures capture the magnitude and duration of declines from an asset's peak value, providing insights into vulnerability and recovery during periods of market stress. Conversely, downside risk measures assess the probability and impact of returns falling below a specified threshold, emphasizing adverse performance relative to expectations or benchmarks.
+
+Six downside risk measures will be used for this analysis: the Sharpe Ratio (SR), the Sortino Ratio (SoR), the Upside Potential Ratio, Value at Risk (VaR), Conditional Value at Risk (CVaR), and Conditional Drawdown at Risk (CDD). Since some of these measures require a risk-free rate or a minimum acceptable return (MAR), the target return will be based on South African government bonds with a 10-year maturity [@damodaran1999estimating].For drawdown measures, the Sterling, Calmar, Burke, Pain, and Martin Ratios, along with the Pain Index and the Ulcer Index, will be calculated.
+
+The main claim by Brightwater for their RPP is its ability to perform well under all economic conditions. To evaluate this claim, South African Real GDP growth will be used to categorize economic conditions into three regimes: recession, moderate growth, and high growth. High growth is defined as GDP growth rates above 3%, moderate growth as rates between 0% and 3%, and recession as rates below 0%. These thresholds are based on South Africa’s historical growth rates during the period under study, with a mean growth rate of 1.5%.
+
+## Benchmarks
+
+To benchmark the performance of the South African RPP, it will be compared to the MVP and the MDP. The mathematical foundations of these portfolios are as follows:
+The MVP minimizes portfolio variance using the covariance matrix of asset returns and portfolio weights:
+
+\begin{equation}
+{Minimize:} \sigma_p^2 = \mathbf{w}^\top \Sigma \mathbf{w}
+\end{equation}
+
+The equation represents the portfolio variance, the vector of portfolio weights, and the covariance matrix of asset returns.  
+
+The MDP maximizes the diversification ratio, which balances the weighted average of individual asset volatilities with the portfolio's total risk:  
+
+\begin{equation}
+{DR} = \frac{\sum_{i=1}^{N} w_i \sigma_i}{\sqrt{\mathbf{w}^\top \Sigma \mathbf{w}}}
+\end{equation}
+
+The RPP, MVP, and MDP represent distinct approaches to portfolio optimization, all aimed at minimizing risk without relying on expected returns for construction. The RPP equalizes risk contributions across assets, focusing on balancing portfolio risk without prioritizing correlations or volatilities. In contrast, the MVP minimizes total portfolio variance, often leading to concentrated allocations in low-risk assets and high sensitivity to asset correlations. The MDP, on the other hand, maximizes the diversification ratio by allocating more weight to uncorrelated, high-volatility assets, thereby enhancing diversification.
+
+The shared objective of risk minimization, combined with their independence from expected returns, makes the MVP and MDP suitable benchmarks for assessing the performance of the RPP..
+
+
+5. Empirical Results
+
+
+```{r, warning=FALSE}
+
 LCL_filtered <- filter_stock_function(LCL_Stock_Returns)
-ALSI_weights <- filter_weight_index(LCL_Stock_Returns, "J203")
-ALSI_returns <- Return.portfolio(LCL_filtered, weights = ALSI_weights, verbose = TRUE)
-
-```
-
-Extract bond data
-
-```{r}
+weights_mv <- rolling_min_vol_portfolio_weights(LCL_filtered, 252, 63)
+returns.mv <- Return.portfolio(LCL_filtered, weights = weights_mv, verbose = TRUE)
+weights_md <- most_diversified_weights(LCL_filtered, window_size = 252, rebalance_interval = 63) 
+returns.md <- Return.portfolio(LCL_filtered, weights = weights_md, verbose = TRUE)
+#ALSI_weights <- filter_weight_index(LCL_Stock_Returns, "J433")
+#ALSI_returns <- Return.portfolio(LCL_filtered, weights = ALSI_weights, verbose = TRUE)
 Bond_return_10 <- Bond_return(BondYields_10Y_SA, "BondYield_10", 10)
 Bond_return_2 <- Bond_return(BondYields_2Y_SA, "BondYield_2", 2)
-
 LCL_Bond <- merge.xts(Bond_return_10, Bond_return_2, LCL_filtered, join = "inner")
-
-```
-
-
-Creating RPP portfolio
-
-```{r}
 Sigma <- cov(LCL_Bond)
 portfolio.parity <- riskParityPortfolio(Sigma)
 rWindows<-rollingWindows(LCL_Bond, period="12m",
                          by="3m")
-
-parity.weights<-RollingRiskParity(rWindows$from@Data, rWindows$to@Data, LCL_Bond) %>% na.omit()
+parity.weights <- RollingRiskParity(rWindows$from@Data, rWindows$to@Data, LCL_Bond) %>% na.omit()
 parity.returns <- Return.portfolio(LCL_Bond, weights=parity.weights,verbose=TRUE)
-
-```
-
-
-```{r}
-
-p.returns<-merge.xts(ALSI_returns$returns, parity.returns$returns, join = "inner")
-names(p.returns)<-c("J203", "RPP")
-
-
-PerformanceAnalytics::charts.PerformanceSummary(p.returns, colorset=rich6equal,
-                          lwd=2, cex.legend = 1.0, event.labels = TRUE, main = "")
-
-
-PerformanceAnalytics::chart.StackedBar(parity.weights, 
-                                       xlab = "Rebalance Dates",
-                                       ylab = "Weight", 
-                                       main = "Risk Parity")
-
-```
-
-
-```{r}
+#p.returns<-merge.xts(ALSI_returns$returns, parity.returns$returns, join = "inner")
+#names(p.returns)<-c("J203", "RPP")
 Sigma_nb <- cov(LCL_filtered)
 portfolio.parity.nb <- riskParityPortfolio(Sigma_nb)
 rWindows.nb<-rollingWindows(LCL_filtered, period="12m",
                          by="3m")
-
 parity.weights.nb <- RollingRiskParity(rWindows.nb$from@Data, rWindows.nb$to@Data, LCL_filtered) %>% na.omit()
 parity.returns.nb <- Return.portfolio(LCL_filtered, weights=parity.weights.nb,verbose=TRUE)
+#MV <- optimalPortfolio(Sigma_nb, control = list(type = 'minvol', constraint = 'lo'))
+p.returns.nb <- merge.xts(returns.mv$returns, parity.returns.nb$returns, parity.returns$returns, returns.md$returns, join = "inner")
+names(p.returns.nb)<-c("MVP", "RPP w/o Bonds", "RPP", "MDP")
+
+#min vol portfolio
 
 
-```
-
-```{r}
-p.returns.nb <- merge.xts(ALSI_returns$returns, parity.returns.nb$returns, parity.returns$returns, join = "inner")
-names(p.returns.nb)<-c("J203", "RPP w/o Bonds", "RPP")
-
-
-PerformanceAnalytics::charts.PerformanceSummary(p.returns.nb, colorset=rich6equal,
-                          lwd=2, cex.legend = 1.0, event.labels = TRUE, main = "")
-
-
-PerformanceAnalytics::chart.StackedBar(parity.weights, 
-                                       xlab = "Rebalance Dates",
-                                       ylab = "Weight", 
-                                       main = "Risk Parity")
+# filtered_dates <- seq(from = start(ALSI_weights), to = end(ALSI_weights), by = "3 months")
+# 
+# # Subset the xts object for the filtered dates
+# filtered_data <- ALSI_weights[as.Date(index(ALSI_weights)) %in% as.Date(filtered_dates)]
 
 ```
 
+Figure 1 illustrates the cumulative returns of the MDP, the RPP w/o Bonds, the RPP, and the MVP. The MDP portfolio exhibits the highest cumulative growth, particularly during market recoveries, suggesting superior risk-adjusted returns. The MVP and RPP portfolios display lower but stable growth. The RPP portfolio demonstrates the lowest performance among all portfolios by a significant margin, as also represented numerically in Table 1.
 
-Econ Regime
+```{r Figure1,  warning =  FALSE, fig.align = 'center', fig.cap = "Cumulative returns over the whole portfolio runtime \\label{Figure1}", fig.ext = 'png', fig.height = 3, fig.width = 3}
+PerformanceAnalytics::chart.CumReturns(p.returns.nb, colorset=rich6equal,
+                          lwd=1, cex.legend = 0.5, event.labels = TRUE, main = "", legend.loc = "topleft")
+```
+
+
+While cumulative returns provide a long-term perspective on portfolio growth, they fail to capture the nuances of short-term performance and return variability. Key periods of market stress or exceptional outperformance are obscured, making it difficult to assess the consistency and stability of returns. To address this limitation, yearly rolling returns are analyzed to provide greater granularity, offering insights into return trends, volatility patterns, and performance consistency over time.
+
 
 ```{r}
-library(lubridate)
+bind_rows(
+  as.data.frame(Return.cumulative(p.returns.nb)),
+  as.data.frame(Return.annualized(p.returns.nb))
+) %>% kbl(caption = "Cumulative and Annualized Returns", label = "returns") %>% 
+    kable_styling()
+
+```
+
+Figure 2 depicts the annualized rolling returns. While all portfolios exhibit spikes and dips during significant market events, such as the 2008 financial crisis and the Covid-19 pandemic, the MDP tends to exhibit higher peaks and faster recoveries, reflecting stronger performance during recovery periods. The MVP and RPP w/o Bonds portfolios display more stable but generally lower returns. Again, the RPP demonstrates the weakest performance, particularly during periods of high economic growth. The differences in annualized returns between the portfolios are also highlighted in Table 1. Although the returns of the RPP remain significantly lower, the magnitude of the difference is reduced for annualized returns.
+
+```{r Figure2,  warning =  FALSE, fig.align = 'center', fig.cap = "Annualized rolling returns \\label{Figure2}", fig.ext = 'png', fig.height = 3, fig.width = 3}
+chart.RollingPerformance(p.returns.nb, width = 252, colorset=rich6equal,
+                          lwd=1, cex.legend = 0.5, event.labels = TRUE, main = "", legend.loc = "top")
+```
+
+Given the goal of minimizing risk and protecting investors from losses, the drawdown ratio provides an important tool for understanding the potential risk an investor may face. Drawdown focuses on the severity and duration of losses, capturing tail-risk events and periods of underperformance. By plotting drawdowns, one can visually compare the resilience of portfolios during market downturns, identify recovery patterns, and assess risk-adjusted returns over time.
+
+```{r Figure3,  warning =  FALSE, fig.align = 'center', fig.cap = "Drawdowns \\label{Figure3}", fig.ext = 'png', fig.height = 3, fig.width = 3}
+chart.Drawdown(p.returns.nb, colorset=rich6equal,
+                          lwd=1, cex.legend = 0.5, event.labels = TRUE, main = "", legend.loc = "bottom")
+```
+
+## Drawdown Risk Measures
+
+The visual analysis of drawdowns is inconclusive, as no portfolio exhibits significant outliers, either positively or negatively. Therefore, seven drawdown ratios are calculated and presented in Table 2.
+
+The analysis of drawdown ratios reveals substantial differences in the risk-adjusted performance of the portfolios, highlighting the impact of drawdown risk on portfolio efficiency. The Sterling Ratio and Calmar Ratio, which measure returns relative to drawdowns, demonstrate that the MDP achieves the highest performance (0.3565 and 0.4553, respectively). This suggests superior risk-adjusted returns compared to the other portfolios, with the RPP showing the weakest performance in both metrics (0.2376 and 0.3162, respectively).
+
+The Burke Ratio, which penalizes volatility and accounts for all drawdowns, further underscores the robustness of the MDP (0.1434), which far outperforms the RPP (0.0140). The Pain Index and Ulcer Index, which assess the severity and duration of drawdowns, indicate that the RPP w/o Bonds experiences the shallowest drawdowns (0.0520 and 0.0904, respectively), closely followed by the MDP (0.0542 and 0.1040). However, the higher Pain Ratio of the MDP (1.3767) reflects its ability to deliver greater returns relative to drawdown risk compared to the RPP w/o Bonds.
+
+Lastly, the Martin Ratio, which measures returns adjusted for drawdown risk, further supports the outperformance of the MDP (0.7169). In contrast, the RPP (0.0755) and other portfolios demonstrate significantly lower values, emphasizing their vulnerability to drawdowns.
+Overall, the MDP consistently excels across all drawdown-related metrics, underscoring its resilience and efficiency in managing drawdown risk. In contrast, the RPP emerges as the least effective portfolio across these measures.
+
+```{r}
+table.DrawdownsRatio(p.returns.nb, Rf = 0.08975) %>%
+  kbl(caption = "Drawdowns ratio table", label = "drawdowns-ratio") %>%
+  kable_styling()
+```
+
+## Downside Risk Measures
+
+Building on the analysis of drawdown ratios in the first table, which emphasized the portfolios' resilience and efficiency in managing downside risk, the second and third tables shift focus to downside risk-adjusted performance metrics. These metrics provide a more detailed perspective on how the portfolios perform under various measures of risk, further complementing the insights from the drawdown ratios.
+
+### Sharpe Ratios
+
+The second table displays the Sharpe Ratios of the different portfolios. The standard deviation (StdDev) Sharpe ratio, which evaluates returns relative to total volatility, shows that RPP w/o Bonds (-10.79) achieves the best performance, whereas RPP exhibits the weakest performance (-15.50). This suggests that the RPP struggles significantly with overall risk-adjusted returns.
+
+The Value at Risk (VaR) Sharpe ratio, which accounts for the risk of extreme losses, reinforces this trend. RPP w/o Bonds again outperforms the other portfolios (-7.08), while RPP demonstrates greater vulnerability to tail risk (-9.67). Similarly, the Expected Shortfall (ES) Sharpe ratio, which considers the average of worst-case losses, indicates marginal differences among the portfolios. RPP w/o Bonds (-3.05) slightly outperforms others, while RPP (-3.67) consistently underperforms.
+
+The SemiSD Sharpe ratio, which uses downside volatility as the risk measure, further confirms the relative superiority of RPP w/o Bonds (-10.34) over other portfolios, followed by the Minimum Variance portfolio (-11.32). In contrast, RPP (-14.64) exhibits significantly weaker downside risk-adjusted performance, reflecting heightened sensitivity to negative returns.
+
+The analysis demonstrates that RPP w/o Bonds consistently achieves better risk-adjusted returns under all downside risk measures, while RPP lags across all metrics, indicating marked underperformance. The Minimum Variance and Most Diversified portfolios perform moderately but remain less efficient than RPP w/o Bonds in managing downside risk.
+
+
+```{r}
+SharpeRatio(p.returns.nb, Rf = 0.095) %>% 
+    kbl(caption = "Sharpe Ratios", label = "sharpe-ratios")  %>% 
+    kable_styling()
+```
+
+### Additional Downside Risk Measures
+
+The third table introduces additional downside and opportunity-based performance metrics, including the Sortino Ratio, conditional drawdown, upside potential, Expected Shortfall (ES), and Value at Risk (VaR). These metrics provide a more refined evaluation of portfolio performance by emphasizing the balance between downside risk and potential gains.
+
+The Sortino Ratio, which measures returns relative to downside risk, reveals that all portfolios perform similarly, with slight differences around -0.996. This indicates uniformly weak performance when evaluated against the minimum acceptable return (MAR) of 8.957%.
+
+Conditional drawdown at the 5% confidence level highlights the Most Diversified portfolio as the best performer (0.0413), followed closely by RPP w/o Bonds (0.0400). These results indicate that these portfolios experience relatively smaller extreme drawdowns. In contrast, RPP (0.0283) performs the weakest in this metric, reflecting greater vulnerability to extreme losses.
+
+Upside potential, measured against a MAR of 9%, is undefined (NaN) for all portfolios, likely due to the absence of meaningful positive deviations above the MAR during the evaluation period.
+
+For Expected Shortfall (ES), which represents the average of the worst-case losses, RPP w/o Bonds (-0.0201) achieves the best performance. The Most Diversified portfolio (-0.0178) and RPP (-0.0142) exhibit slightly worse outcomes. A similar pattern is observed for VaR, another tail-risk metric, where RPP w/o Bonds (-0.0123) performs the best, while RPP (-0.0086) lags behind.
+
+The downside risk metrics such as conditional drawdown favor the Most Diversified and RPP w/o Bonds portfolios. However, both upside potential and tail risk metrics highlight significant challenges faced by all portfolios in achieving favorable risk-adjusted returns during the evaluation period.
+
+```{r}
+calculate_ratios(p.returns.nb, BondYields_10Y_SA) %>% 
+    kbl(caption = "Downside and Opportunity-based Performance Metrics", label = "downside-metrics") %>%
+    kable_styling()
+```
+
+To evaluate whether the RPP performs reasonably well across all economic environments, the returns, volatility, and Sharpe Ratio were calculated for different economic states. The results in Table 4 suggest that RPPs struggle to consistently deliver reasonable returns in all economic regimes.
+
+While the RPP w/o Bonds slightly improves performance in high-growth regimes, with a Sharpe Ratio of 0.0501 compared to 0.0476 for RPP, and in recessions, with a Sharpe Ratio of 0.0483 compared to 0.0245 for RPP, both portfolios underperform in these regimes relative to their performance during moderate growth. In moderate growth conditions, the Sharpe Ratios of 0.0865 for RPP and 0.0824 for RPP w/o Bonds indicate more favorable risk-adjusted returns.
+
+However, elevated volatility during recessions, measured at 0.0090 for RPP and 0.0147 for RPP w/o Bonds, underscores the challenges of maintaining stability during adverse economic conditions. Although the inclusion or exclusion of bonds introduces slight performance variations, neither configuration of the RPP fully meets expectations for producing stable and reasonable returns across all economic states, particularly during downturns.
+
+```{r}
 
 return_parity <- return_data(parity.returns)
-return_ALSI <- return_data(ALSI_returns)
+return_mv <- return_data(returns.mv)
 return_parity_nb <- return_data(parity.returns.nb)
+return_md <- return_data(returns.md)
 
 regime <- economic_regime(SA_Growth, 3, 0)
 
-results_ALSI <- regime_returns(return_ALSI, regime)
+results_mv <- regime_returns(return_mv, regime)
 results_RPP <- regime_returns(return_parity, regime)
 results_RPP_nb <- regime_returns(return_parity_nb, regime)
+results_md <- regime_returns(return_md, regime)
+
+combine_regime_results(results_mv, results_RPP, results_RPP_nb, results_md) %>% 
+    kbl(caption = "Performance at Different Economic States", label = "regime") %>% 
+    kable_styling()
 
 ```
 
+# Concluding Remarks
 
+This study assessed the feasibility of a South African-based RPP. Two RPP configurations were analyzed: one including South African stocks and government bonds with 2- and 10-year maturities, and another excluding bonds. These portfolios were compared to a MVP and a MMDP, two widely recognized risk-minimizing approaches derived from MPT. To evaluate their performance, cumulative and annualized returns were calculated, alongside downside and drawdown measures to assess risk-adjusted returns. Additionally, the returns and volatility of the portfolios were examined across different economic states to evaluate Brightwater's claim that RPPs perform well under all conditions.
 
+The findings present mixed conclusions. The results indicate that the RPP without bonds performs well in managing downside risk, effectively limiting short-term losses below the target return. However, it performs poorly in managing drawdown risk, experiencing deeper and more prolonged declines during adverse market conditions. This highlights the portfolio’s ability to stabilize returns in the short term but also reveals vulnerabilities to sustained downturns, emphasizing the need for enhanced resilience strategies to improve recovery from significant drawdowns. Similarly, cumulative returns do not provide strong support for either RPP configuration, as both underperform relative to the MVP and MDP. The inclusion of bonds in the RPP lowers its overall performance but results in the least volatile portfolio across all economic regimes.
 
+Ultimately, the relatively low returns of the RPP portfolios highlight the frequent need for leverage to achieve competitive returns, as suggested in previous literature [@chaves2011risk; @hurst2010understanding]. While RPPs demonstrate strengths in managing downside risk, their underperformance in other areas raises questions about their feasibility as a robust investment strategy in the South African context.
 
+# Appendix
 
+```{r Figure 4,  warning =  FALSE, fig.align = 'center', fig.cap = "Drawdowns \\label{Figure4}", fig.ext = 'png', fig.height = 3, fig.width = 3}
+PerformanceAnalytics::chart.StackedBar(parity.weights, 
+                                       xlab = "Rebalance Dates",
+                                       ylab = "Weight", 
+                                       main = "Risk Parity",
+                                       legend.loc = NULL)
 
+PerformanceAnalytics::chart.StackedBar(parity.weights.nb, 
+                                       xlab = "Rebalance Dates",
+                                       ylab = "Weight", 
+                                       main = "Risk Parity without Bonds",
+                                       legend.loc = NULL)
 
+PerformanceAnalytics::chart.StackedBar(weights_mv, 
+                                       xlab = "Rebalance Dates",
+                                       ylab = "Weight", 
+                                       main = "MVP",
+                                       legend.loc = NULL)
+
+PerformanceAnalytics::chart.StackedBar(weights_md, 
+                                       xlab = "Rebalance Dates",
+                                       ylab = "Weight", 
+                                       main = "MDP",
+                                       legend.loc = NULL)
+
+```
 
 
 
 
 ```{r}
-
-chart.RollingPerformance(
-  R = p.returns.nb,
-  FUN = "SharpeRatio.annualized",
-  width = 12,
-  main = "Rolling Sharpe Ratio",
-  legend.loc = "topright"
-)
-
-table.DrawdownsRatio(p.returns.nb, Rf = 0.095)
-
-risk_f <- mean(BondYields_10Y_SA$BondYield_10)
-SharpeRatio(p.returns.nb, Rf = 0.095)
-SortinoRatio(p.returns.nb, Rf = 0.095)
-CDD(p.returns.nb, Rf = 0.095)
-UpsidePotentialRatio(p.returns.nb, MAR = 0.053)
-
-TreynorRatio(parity.returns$returns, ALSI_returns$returns)
-TreynorRatio(parity.returns.nb$returns, ALSI_returns$returns)
-
-
-calculate_ratios(p.returns.nb, BondYields_10Y_SA$BondYield_10, 0.053)
-
-
-mar_ratios <- apply(ALSI_returns$returns, 2, function(x) {
-  annualized_return <- Return.annualized(x)
-  max_drawdown <- maxDrawdown(x)
-  annualized_return / max_drawdown
-})
+# chart.RollingPerformance(
+#   R = p.returns.nb,
+#   FUN = "SharpeRatio.annualized",
+#   width = 12,
+#   main = "Rolling Sharpe Ratio",
+#   legend.loc = "topright"
+# )
+# 
+# risk_f <- mean(BondYields_10Y_SA$BondYield_10)
+# SharpeRatio(p.returns.nb, Rf = 0.095)
+# SortinoRatio(p.returns.nb, Rf = 0.095)
+# CDD(p.returns.nb, Rf = 0.095)
+# UpsidePotentialRatio(p.returns.nb, MAR = 0.053)
+# 
+# 
+# TreynorRatio(parity.returns$returns, ALSI_returns$returns)
+# TreynorRatio(parity.returns.nb$returns, ALSI_returns$returns)
+# 
+# 
+# 
+# 
+# 
+# mar_ratios <- apply(ALSI_returns$returns, 2, function(x) {
+#   annualized_return <- Return.annualized(x)
+#   max_drawdown <- maxDrawdown(x)
+#   annualized_return / max_drawdown
+# })
 
 
-CVaR(p.returns.nb, method = "historical")
-VaR(p.returns.nb, method = "historical")
 ```
 
 
-
-
-
-
+```{r}
+# returns_ts <- as.timeSeries(LCL_filtered)
+# spec <- portfolioSpec() # fPortfolio
+# setRiskFreeRate(spec) <- 0 # Set risk-free rate if applicable (default: 0)
+# 
+# # Set constraints (e.g., full investment and box constraints)
+# constraints <- "LongOnly" # Ensures non-negative weights that sum to 1
+# 
+# # Optimize the portfolio for minimum variance
+# min_vol_portfolio <- minvariancePortfolio(returns_ts, spec = spec, constraints = constraints)
+# weights <- getWeights(min_vol_portfolio) # Portfolio weights as a named numeric vector
+# date <- time(min_vol_portfolio@data)     # Extract the optimization date
+# 
+# # Convert weights to a data.frame
+# weights_df <- data.frame(t(weights)) # Transpose weights to make them rows
+# rownames(weights_df) <- as.character(date) # Set rownames to the optimization date
+# 
+# # Convert to xts
+# weights_xts <- as.xts(weights_df)
+```
 

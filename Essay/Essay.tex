@@ -1,0 +1,1006 @@
+\documentclass[11pt,preprint]{elsarticle}
+
+\usepackage{lmodern}
+%%%% My spacing
+\usepackage{setspace}
+\setstretch{1.2}
+\DeclareMathSizes{12}{14}{10}{10}
+
+% Wrap around which gives all figures included the [H] command, or places it "here". This can be tedious to code in Rmarkdown.
+\usepackage{float}
+\let\origfigure\figure
+\let\endorigfigure\endfigure
+\renewenvironment{figure}[1][2] {
+    \expandafter\origfigure\expandafter[H]
+} {
+    \endorigfigure
+}
+
+\let\origtable\table
+\let\endorigtable\endtable
+\renewenvironment{table}[1][2] {
+    \expandafter\origtable\expandafter[H]
+} {
+    \endorigtable
+}
+
+
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+    \usepackage{xltxtra,xunicode}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \newcommand{\euro}{€}
+\fi
+
+\usepackage{amssymb, amsmath, amsthm, amsfonts}
+
+\def\bibsection{\section*{References}} %%% Make "References" appear before bibliography
+
+
+\usepackage[numbers]{natbib}
+
+\usepackage{longtable}
+\usepackage[margin=2.3cm,bottom=2cm,top=2.5cm, includefoot]{geometry}
+\usepackage{fancyhdr}
+\usepackage[bottom, hang, flushmargin]{footmisc}
+\usepackage{graphicx}
+\numberwithin{equation}{section}
+\numberwithin{figure}{section}
+\numberwithin{table}{section}
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{1.3ex plus 0.5ex minus 0.3ex}
+\usepackage{textcomp}
+\renewcommand{\headrulewidth}{0.2pt}
+\renewcommand{\footrulewidth}{0.3pt}
+
+\usepackage{array}
+\newcolumntype{x}[1]{>{\centering\arraybackslash\hspace{0pt}}p{#1}}
+
+%%%%  Remove the "preprint submitted to" part. Don't worry about this either, it just looks better without it:
+\makeatletter
+\def\ps@pprintTitle{%
+  \let\@oddhead\@empty
+  \let\@evenhead\@empty
+  \let\@oddfoot\@empty
+  \let\@evenfoot\@oddfoot
+}
+\makeatother
+
+ \def\tightlist{} % This allows for subbullets!
+
+\usepackage{hyperref}
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            colorlinks=true,
+            citecolor=blue,
+            urlcolor=blue,
+            linkcolor=blue,
+            pdfborder={0 0 0}}
+
+
+% The following packages allow huxtable to work:
+\usepackage{siunitx}
+\usepackage{multirow}
+\usepackage{hhline}
+\usepackage{calc}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{caption}
+
+
+\newenvironment{columns}[1][]{}{}
+
+\newenvironment{column}[1]{\begin{minipage}{#1}\ignorespaces}{%
+\end{minipage}
+\ifhmode\unskip\fi
+\aftergroup\useignorespacesandallpars}
+
+\def\useignorespacesandallpars#1\ignorespaces\fi{%
+#1\fi\ignorespacesandallpars}
+
+\makeatletter
+\def\ignorespacesandallpars{%
+  \@ifnextchar\par
+    {\expandafter\ignorespacesandallpars\@gobble}%
+    {}%
+}
+\makeatother
+
+
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+\href{\#cite.\detokenize{#1}}{#2}\nocite{#1}}
+
+\makeatletter
+% allow citations to break across lines
+\let\@cite@ofmt\@firstofone
+% avoid brackets around text for \cite:
+\def\@biblabel#1{}
+\def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+{\begin{list}{}{%
+	\setlength{\itemindent}{0pt}
+	\setlength{\leftmargin}{0pt}
+	\setlength{\parsep}{0pt}
+	% turn on hanging indent if param 1 is 1
+	\ifodd #1
+	\setlength{\leftmargin}{\cslhangindent}
+	\setlength{\itemindent}{-1\cslhangindent}
+	\fi
+	% set entry spacing
+	\setlength{\itemsep}{#2\baselineskip}}}
+{\end{list}}
+
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+
+
+\urlstyle{same}  % don't use monospace font for urls
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\setcounter{secnumdepth}{5}
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+
+%%% Include extra packages specified by user
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+
+%%% Hard setting column skips for reports - this ensures greater consistency and control over the length settings in the document.
+%% page layout
+%% paragraphs
+\setlength{\baselineskip}{12pt plus 0pt minus 0pt}
+\setlength{\parskip}{12pt plus 0pt minus 0pt}
+\setlength{\parindent}{0pt plus 0pt minus 0pt}
+%% floats
+\setlength{\floatsep}{12pt plus 0 pt minus 0pt}
+\setlength{\textfloatsep}{20pt plus 0pt minus 0pt}
+\setlength{\intextsep}{14pt plus 0pt minus 0pt}
+\setlength{\dbltextfloatsep}{20pt plus 0pt minus 0pt}
+\setlength{\dblfloatsep}{14pt plus 0pt minus 0pt}
+%% maths
+\setlength{\abovedisplayskip}{12pt plus 0pt minus 0pt}
+\setlength{\belowdisplayskip}{12pt plus 0pt minus 0pt}
+%% lists
+\setlength{\topsep}{10pt plus 0pt minus 0pt}
+\setlength{\partopsep}{3pt plus 0pt minus 0pt}
+\setlength{\itemsep}{5pt plus 0pt minus 0pt}
+\setlength{\labelsep}{8mm plus 0mm minus 0mm}
+\setlength{\parsep}{\the\parskip}
+\setlength{\listparindent}{\the\parindent}
+%% verbatim
+\setlength{\fboxsep}{5pt plus 0pt minus 0pt}
+
+
+
+\begin{document}
+
+
+
+\begin{frontmatter}  %
+
+\title{Assessing the Viability of Risk Parity Portfolios in South
+African Markets: A Comparative Analysis of Risk-Adjusted Performance}
+
+% Set to FALSE if wanting to remove title (for submission)
+
+
+
+
+\author[Add1]{Vincent Reinshagen}
+\ead{28736907@sun.ac.za}
+
+
+
+
+
+\address[Add1]{Stellenbosch University, Stellenbosch, South Africa}
+
+
+\begin{abstract}
+\small{
+This study evaluates the applicability of Risk Parity Portfolios (RPP)
+in the South African market, comparing their performance to the Minimum
+Variance Portfolio (MVP) and Maximum Diversification Portfolio (MDP).
+Utilizing data from 2007 to 2024, the analysis examines risk-adjusted
+returns, drawdown metrics, and performance across economic regimes.
+While RPPs demonstrate robustness during downturns, their overall
+returns lag behind MVP and MDP, particularly in high-growth conditions.
+The findings highlight the trade-offs in leveraging RPPs for portfolio
+diversification in volatile markets, offering insights for investors
+seeking balanced risk allocation strategies.
+}
+\end{abstract}
+
+\vspace{1cm}
+
+
+
+
+
+\vspace{0.5cm}
+
+\end{frontmatter}
+
+\setcounter{footnote}{0}
+
+
+
+%________________________
+% Header and Footers
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{fancy}
+\chead{}
+\rhead{}
+\lfoot{}
+\rfoot{\footnotesize Page \thepage}
+\lhead{}
+%\rfoot{\footnotesize Page \thepage } % "e.g. Page 2"
+\cfoot{}
+
+%\setlength\headheight{30pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%________________________
+
+\headsep 35pt % So that header does not go over title
+
+
+
+
+\section{\texorpdfstring{Introduction
+\label{Introduction}}{Introduction }}\label{introduction}
+
+Finding the balance between risk and return is a central challenge in
+portfolio construction. Traditional methods for addressing this issue
+are grounded in Modern Portfolio Theory (MPT), introduced by Markowitz
+(\citeproc{ref-e5a1bb8f-41b7-35c6-95cd-8b366d3e99bc}{1952}), which
+provides frameworks such as the Minimum Variance Portfolio (MVP) and the
+Maximum Diversification Portfolio (MDP). These approaches focus on risk,
+often measured as variance, and aim to optimize either expected returns
+or risk minimization (\citeproc{ref-choueifaty2008towards}{Choueifaty,
+2008}; \citeproc{ref-e5a1bb8f-41b7-35c6-95cd-8b366d3e99bc}{Markowitz,
+1952}).
+
+However, an alternative methodology was introduced by Ray Dalio of
+Bridgewater Associates in 1996 with the ``All-Weather Fund,'' designed
+to perform well across all economic conditions and first assessed
+academically by Qian \& others (\citeproc{ref-qian2005risk}{2005}). This
+fund employs the risk parity approach (RPP), where assets contribute
+equally to the portfolio's overall risk, emphasizing diversification
+over maximizing returns or minimizing risk (Maillard, Roncalli \&
+Tiletche (\citeproc{ref-maillard2010properties}{2010})).
+
+The RPP approach has demonstrated robust performance in various studies
+(Maillard \emph{et al.} (\citeproc{ref-maillard2010properties}{2010});
+Chaves, Hsu, Li \& Shakernia (\citeproc{ref-chaves2011risk}{2011});
+Choi, Kim \& Kim (\citeproc{ref-choi2024diversified}{2024})). However,
+most research focuses on portfolios composed of assets from developed
+markets, which typically exhibit lower volatility
+(\citeproc{ref-loayza2007macroeconomic}{Loayza, Ranciere, Serven \&
+Ventura, 2007}). To explore its applicability in more volatile
+environments, this paper investigates the performance of an RPP
+constructed from South African assets. The analysis compares the risk
+and return of the South African RPP to two commonly used risk-minimizing
+portfolios, the MVP and the MDP.
+
+This paper addresses the question: \emph{How can the risk parity
+approach be effectively implemented to construct a diversified portfolio
+of South African assets, and how does it compare to traditional asset
+allocation strategies in terms of risk-adjusted returns?}
+
+To answer this question, the next section examines the theoretical
+foundations of RPPs, MVPs, and MDPs. The subsequent section elaborates
+on the methodology employed in this study, including the data used, the
+characteristics of the benchmark portfolios, and the performance
+measures. This is followed by an analysis of the results. Finally, the
+paper concludes with insights on the feasibility of applying the RPP
+approach to South African assets and outlines directions for future
+research.
+
+\section{Theory}\label{theory}
+
+Risk Parity Portfolios (RPPs) offer an alternative approach to
+traditional portfolio construction by emphasizing equal risk
+contributions from all assets in a portfolio (Roncalli
+(\citeproc{ref-roncalli2013introduction}{2013})). This concept diverges
+from the mean-variance optimization framework of Modern Portfolio Theory
+(MPT), which focuses on maximizing returns for a given level of risk or
+minimizing risk for a desired return level. Instead, RPPs aim to achieve
+balance by allocating portfolio weights such that each asset contributes
+equally to the overall portfolio risk
+(\citeproc{ref-asness2012leverage}{Asness, Frazzini \& Pedersen, 2012};
+\citeproc{ref-maillard2010properties}{Maillard \emph{et al.}, 2010}).
+
+\subsection{Principles of Risk Parity}\label{principles-of-risk-parity}
+
+Qian (\citeproc{ref-qian2011risk}{2011}) highlights the importance of
+diversification in constructing robust portfolios, which is the core
+idea of RPPs. In MPT, high-return assets often dominate the portfolio
+due to their favorable expected risk-return trade-off. This dominance
+can lead to concentration in specific asset classes, reducing the
+benefits of diversification (\citeproc{ref-qian2011risk}{Qian, 2011}).
+To address this issue, thresholds are often imposed on portfolio
+composition, such as weight limits for specific assets or industries.
+However, these thresholds are based on subjective human estimations,
+leading to variability in portfolio performance
+(\citeproc{ref-hurst2010understanding}{Hurst, Johnson \& Ooi, 2010}).
+Risk parity, by contrast, avoids such concentration by equalizing
+marginal risk contributions, ensuring that no single asset
+disproportionately influences the portfolio's performance.
+
+The mathematical foundation of RPPs involves calculating the marginal
+risk contribution of each asset and iteratively adjusting the weights
+until these contributions are equalized. This process is mathematically
+expressed as:
+
+\begin{equation}
+RC_i = \frac{\sigma_p}{n}, \quad \forall i
+\end{equation}
+
+where RC denotes the risk contribution, which equals the ratio of the
+total portfolio standard deviation and the number of assets. The total
+portfolio risk is calculated as:
+
+\begin{equation}
+\sigma_p = \sqrt{\mathbf{w}^T \boldsymbol{\Sigma} \mathbf{w}}
+\end{equation}
+
+This formula aggregates individual asset risks and their covariances,
+weighted by portfolio allocation. The risk contribution of asset i is
+defined as the product of its portfolio weight w and its marginal risk
+contribution to the portfolio:
+
+\begin{equation}
+RC_i = w_i \cdot (\boldsymbol{\Sigma} \mathbf{w})_i 
+\end{equation}
+
+The optimization problem to achieve risk parity can then be formulated
+as:
+
+\begin{equation}
+\min_{\mathbf{w}}  \quad \sum_{i=1}^n \left( RC_i - \frac{\sigma_p}{n} \right)^2 
+\end{equation}
+
+\subsection{Advantages and
+Limitations}\label{advantages-and-limitations}
+
+One primary advantage of RPPs is their robustness across different
+market conditions (Hurst \emph{et al.}
+(\citeproc{ref-hurst2010understanding}{2010})). Additionally, their
+emphasis on risk balance reduces portfolio sensitivity to individual
+asset performance, thereby enhancing resilience (Costa \& Kwon
+(\citeproc{ref-costa2022data}{2022})).
+
+However, RPPs are not without limitations. The assumption of equal risk
+contributions can result in overexposure to low-volatility assets, which
+may fail to deliver adequate returns, especially in rising markets
+(\citeproc{ref-maillard2010properties}{Maillard \emph{et al.}, 2010}).
+Moreover, while RPPs are designed to perform across all economic
+regimes, they may fail during structural breaks or extreme shocks, such
+as the Covid-19 pandemic (\citeproc{ref-stefanova-2020}{Stefanova,
+2020}). This limitation is also shared by other risk-minimizing
+portfolios (\citeproc{ref-james2023semi}{James, Menzies \& Chan, 2023}).
+
+\subsection{Empirical Evidence}\label{empirical-evidence}
+
+Empirical research supports the efficacy of the risk parity approach in
+achieving superior risk-adjusted returns. For example, Asness \emph{et
+al.} (\citeproc{ref-asness2012leverage}{2012}) found that RPPs
+consistently outperformed traditional asset allocation strategies in
+terms of Sharpe ratio. Similarly, Chow, Hsu, Kuo \& Li
+(\citeproc{ref-chow2014study}{2014}) demonstrated that RPPs exhibit
+lower drawdowns and better performance during economic downturns,
+underscoring their utility as an all-weather strategy. Maillard \emph{et
+al.} (\citeproc{ref-maillard2010properties}{2010}) showed that RPPs tend
+to perform well in various economic environments due to their inherent
+diversification.
+
+While much of the existing literature focuses on developed markets,
+emerging markets present unique challenges and opportunities. Common
+characteristics of emerging market assets include higher volatility,
+lower liquidity, and greater exposure to macroeconomic shocks.
+
+\section{Methodology}\label{methodology}
+
+The performance of the Risk Parity Portfolio (RPP) will be assessed by
+comparing it to two other risk-based portfolio construction methods: the
+Minimum Variance Portfolio (MVP) and the Maximum Diversification
+Portfolio (MDP). The construction of these portfolios, the data used,
+and the methods employed for performance evaluation will be described in
+the following subsections.
+
+\subsection{Data}\label{data}
+
+The portfolio will be constructed using the LCL dataset, which contains
+a large share of stocks listed on the JSE stock exchange. The portfolio
+will cover a time frame from January 2007 to November 2024. This
+extended period includes varying economic conditions and two significant
+shocks: the World Financial Crisis and the Covid-19 pandemic. The nearly
+two-decade observation window provides a robust basis for assessing
+long-term performance.
+
+\subsection{Performance Measures}\label{performance-measures}
+
+Although portfolio objectives may vary, a key requirement is
+profitability. To evaluate this, cumulative returns will be calculated.
+However, given the limitations of cumulative returns---such as their
+failure to account for the time period over which returns are
+achieved---annualized returns will also be assessed. Annualized returns
+provide a time-normalized measure of growth, facilitating comparisons
+across investments with different time horizons.
+
+To evaluate risk-adjusted returns and compare the risk levels of the
+portfolios, both drawdown and downside risk measures will be used.
+Drawdown measures capture the magnitude and duration of declines from an
+asset's peak value, providing insights into vulnerability and recovery
+during periods of market stress. Conversely, downside risk measures
+assess the probability and impact of returns falling below a specified
+threshold, emphasizing adverse performance relative to expectations or
+benchmarks.
+
+Six downside risk measures will be used for this analysis: the Sharpe
+Ratio (SR), the Sortino Ratio (SoR), the Upside Potential Ratio, Value
+at Risk (VaR), Conditional Value at Risk (CVaR), and Conditional
+Drawdown at Risk (CDD). Since some of these measures require a risk-free
+rate or a minimum acceptable return (MAR), the target return will be
+based on South African government bonds with a 10-year maturity
+(\citeproc{ref-damodaran1999estimating}{Damodaran, 1999}).For drawdown
+measures, the Sterling, Calmar, Burke, Pain, and Martin Ratios, along
+with the Pain Index and the Ulcer Index, will be calculated.
+
+The main claim by Brightwater for their RPP is its ability to perform
+well under all economic conditions. To evaluate this claim, South
+African Real GDP growth will be used to categorize economic conditions
+into three regimes: recession, moderate growth, and high growth. High
+growth is defined as GDP growth rates above 3\%, moderate growth as
+rates between 0\% and 3\%, and recession as rates below 0\%. These
+thresholds are based on South Africa's historical growth rates during
+the period under study, with a mean growth rate of 1.5\%.
+
+\subsection{Benchmarks}\label{benchmarks}
+
+To benchmark the performance of the South African RPP, it will be
+compared to the MVP and the MDP. The mathematical foundations of these
+portfolios are as follows: The MVP minimizes portfolio variance using
+the covariance matrix of asset returns and portfolio weights:
+
+\begin{equation}
+{Minimize:} \sigma_p^2 = \mathbf{w}^\top \Sigma \mathbf{w}
+\end{equation}
+
+The equation represents the portfolio variance, the vector of portfolio
+weights, and the covariance matrix of asset returns.
+
+The MDP maximizes the diversification ratio, which balances the weighted
+average of individual asset volatilities with the portfolio's total
+risk:
+
+\begin{equation}
+{DR} = \frac{\sum_{i=1}^{N} w_i \sigma_i}{\sqrt{\mathbf{w}^\top \Sigma \mathbf{w}}}
+\end{equation}
+
+The RPP, MVP, and MDP represent distinct approaches to portfolio
+optimization, all aimed at minimizing risk without relying on expected
+returns for construction. The RPP equalizes risk contributions across
+assets, focusing on balancing portfolio risk without prioritizing
+correlations or volatilities. In contrast, the MVP minimizes total
+portfolio variance, often leading to concentrated allocations in
+low-risk assets and high sensitivity to asset correlations. The MDP, on
+the other hand, maximizes the diversification ratio by allocating more
+weight to uncorrelated, high-volatility assets, thereby enhancing
+diversification.
+
+The shared objective of risk minimization, combined with their
+independence from expected returns, makes the MVP and MDP suitable
+benchmarks for assessing the performance of the RPP..
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{4}
+\tightlist
+\item
+  Empirical Results
+\end{enumerate}
+
+Figure 1 illustrates the cumulative returns of the MDP, the RPP w/o
+Bonds, the RPP, and the MVP. The MDP portfolio exhibits the highest
+cumulative growth, particularly during market recoveries, suggesting
+superior risk-adjusted returns. The MVP and RPP portfolios display lower
+but stable growth. The RPP portfolio demonstrates the lowest performance
+among all portfolios by a significant margin, as also represented
+numerically in Table 1.
+
+\begin{figure}[H]
+
+{\centering \includegraphics{Essay_files/figure-latex/Figure1-1} 
+
+}
+
+\caption{Cumulative returns over the whole portfolio runtime \label{Figure1}}\label{fig:Figure1}
+\end{figure}
+
+While cumulative returns provide a long-term perspective on portfolio
+growth, they fail to capture the nuances of short-term performance and
+return variability. Key periods of market stress or exceptional
+outperformance are obscured, making it difficult to assess the
+consistency and stability of returns. To address this limitation, yearly
+rolling returns are analyzed to provide greater granularity, offering
+insights into return trends, volatility patterns, and performance
+consistency over time.
+
+\begin{table}
+\centering
+\caption{\label{tab:returns}Cumulative and Annualized Returns}
+\centering
+\begin{tabular}[t]{l|r|r|r|r}
+\hline
+  & MVP & RPP w/o Bonds & RPP & MDP\\
+\hline
+Cumulative Return & 5.813162 & 6.9217365 & 2.9677804 & 9.3588220\\
+\hline
+Annualized Return & 0.135360 & 0.1467405 & 0.0954672 & 0.1672719\\
+\hline
+\end{tabular}
+\end{table}
+
+Figure 2 depicts the annualized rolling returns. While all portfolios
+exhibit spikes and dips during significant market events, such as the
+2008 financial crisis and the Covid-19 pandemic, the MDP tends to
+exhibit higher peaks and faster recoveries, reflecting stronger
+performance during recovery periods. The MVP and RPP w/o Bonds
+portfolios display more stable but generally lower returns. Again, the
+RPP demonstrates the weakest performance, particularly during periods of
+high economic growth. The differences in annualized returns between the
+portfolios are also highlighted in Table 1. Although the returns of the
+RPP remain significantly lower, the magnitude of the difference is
+reduced for annualized returns.
+
+\begin{figure}[H]
+
+{\centering \includegraphics{Essay_files/figure-latex/Figure2-1} 
+
+}
+
+\caption{Annualized rolling returns \label{Figure2}}\label{fig:Figure2}
+\end{figure}
+
+Given the goal of minimizing risk and protecting investors from losses,
+the drawdown ratio provides an important tool for understanding the
+potential risk an investor may face. Drawdown focuses on the severity
+and duration of losses, capturing tail-risk events and periods of
+underperformance. By plotting drawdowns, one can visually compare the
+resilience of portfolios during market downturns, identify recovery
+patterns, and assess risk-adjusted returns over time.
+
+\begin{figure}[H]
+
+{\centering \includegraphics{Essay_files/figure-latex/Figure3-1} 
+
+}
+
+\caption{Drawdowns \label{Figure3}}\label{fig:Figure3}
+\end{figure}
+
+\subsection{Drawdown Risk Measures}\label{drawdown-risk-measures}
+
+The visual analysis of drawdowns is inconclusive, as no portfolio
+exhibits significant outliers, either positively or negatively.
+Therefore, seven drawdown ratios are calculated and presented in Table
+2.
+
+The analysis of drawdown ratios reveals substantial differences in the
+risk-adjusted performance of the portfolios, highlighting the impact of
+drawdown risk on portfolio efficiency. The Sterling Ratio and Calmar
+Ratio, which measure returns relative to drawdowns, demonstrate that the
+MDP achieves the highest performance (0.3565 and 0.4553, respectively).
+This suggests superior risk-adjusted returns compared to the other
+portfolios, with the RPP showing the weakest performance in both metrics
+(0.2376 and 0.3162, respectively).
+
+The Burke Ratio, which penalizes volatility and accounts for all
+drawdowns, further underscores the robustness of the MDP (0.1434), which
+far outperforms the RPP (0.0140). The Pain Index and Ulcer Index, which
+assess the severity and duration of drawdowns, indicate that the RPP w/o
+Bonds experiences the shallowest drawdowns (0.0520 and 0.0904,
+respectively), closely followed by the MDP (0.0542 and 0.1040). However,
+the higher Pain Ratio of the MDP (1.3767) reflects its ability to
+deliver greater returns relative to drawdown risk compared to the RPP
+w/o Bonds.
+
+Lastly, the Martin Ratio, which measures returns adjusted for drawdown
+risk, further supports the outperformance of the MDP (0.7169). In
+contrast, the RPP (0.0755) and other portfolios demonstrate
+significantly lower values, emphasizing their vulnerability to
+drawdowns. Overall, the MDP consistently excels across all
+drawdown-related metrics, underscoring its resilience and efficiency in
+managing drawdown risk. In contrast, the RPP emerges as the least
+effective portfolio across these measures.
+
+\begin{table}
+\centering
+\caption{\label{tab:drawdowns-ratio}Drawdowns ratio table}
+\centering
+\begin{tabular}[t]{l|r|r|r|r}
+\hline
+  & MVP & RPP w/o Bonds & RPP & MDP\\
+\hline
+Sterling ratio & 0.2640 & 0.2944 & 0.2376 & 0.3592\\
+\hline
+Calmar ratio & 0.3280 & 0.3683 & 0.3162 & 0.4575\\
+\hline
+Burke ratio & 0.0903 & 0.0990 & 0.0140 & 0.1529\\
+\hline
+Pain index & 0.0657 & 0.0520 & 0.0457 & 0.0534\\
+\hline
+Ulcer index & 0.1125 & 0.0904 & 0.0757 & 0.1018\\
+\hline
+Pain ratio & 0.6942 & 1.0960 & 0.1250 & 1.4514\\
+\hline
+Martin ratio & 0.4052 & 0.6304 & 0.0755 & 0.7617\\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Downside Risk Measures}\label{downside-risk-measures}
+
+Building on the analysis of drawdown ratios in the first table, which
+emphasized the portfolios' resilience and efficiency in managing
+downside risk, the second and third tables shift focus to downside
+risk-adjusted performance metrics. These metrics provide a more detailed
+perspective on how the portfolios perform under various measures of
+risk, further complementing the insights from the drawdown ratios.
+
+\subsubsection{Sharpe Ratios}\label{sharpe-ratios}
+
+The second table displays the Sharpe Ratios of the different portfolios.
+The standard deviation (StdDev) Sharpe ratio, which evaluates returns
+relative to total volatility, shows that RPP w/o Bonds (-10.79) achieves
+the best performance, whereas RPP exhibits the weakest performance
+(-15.50). This suggests that the RPP struggles significantly with
+overall risk-adjusted returns.
+
+The Value at Risk (VaR) Sharpe ratio, which accounts for the risk of
+extreme losses, reinforces this trend. RPP w/o Bonds again outperforms
+the other portfolios (-7.08), while RPP demonstrates greater
+vulnerability to tail risk (-9.67). Similarly, the Expected Shortfall
+(ES) Sharpe ratio, which considers the average of worst-case losses,
+indicates marginal differences among the portfolios. RPP w/o Bonds
+(-3.05) slightly outperforms others, while RPP (-3.67) consistently
+underperforms.
+
+The SemiSD Sharpe ratio, which uses downside volatility as the risk
+measure, further confirms the relative superiority of RPP w/o Bonds
+(-10.34) over other portfolios, followed by the Minimum Variance
+portfolio (-11.32). In contrast, RPP (-14.64) exhibits significantly
+weaker downside risk-adjusted performance, reflecting heightened
+sensitivity to negative returns.
+
+The analysis demonstrates that RPP w/o Bonds consistently achieves
+better risk-adjusted returns under all downside risk measures, while RPP
+lags across all metrics, indicating marked underperformance. The Minimum
+Variance and Most Diversified portfolios perform moderately but remain
+less efficient than RPP w/o Bonds in managing downside risk.
+
+\begin{table}
+\centering
+\caption{\label{tab:sharpe-ratios}Sharpe Ratios}
+\centering
+\begin{tabular}[t]{l|r|r|r|r}
+\hline
+  & MVP & RPP w/o Bonds & RPP & MDP\\
+\hline
+StdDev Sharpe (Rf=9.5\%, p=95\%): & -11.911931 & -10.791299 & -15.497496 & -11.826960\\
+\hline
+VaR Sharpe (Rf=9.5\%, p=95\%): & -8.190001 & -7.082659 & -9.669357 & -7.941155\\
+\hline
+ES Sharpe (Rf=9.5\%, p=95\%): & -4.003934 & -3.050884 & -3.666896 & -3.535024\\
+\hline
+SemiSD Sharpe (Rf=9.5\%, p=95\%): & -11.316888 & -10.336831 & -14.644187 & -11.411243\\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Additional Downside Risk
+Measures}\label{additional-downside-risk-measures}
+
+The third table introduces additional downside and opportunity-based
+performance metrics, including the Sortino Ratio, conditional drawdown,
+upside potential, Expected Shortfall (ES), and Value at Risk (VaR).
+These metrics provide a more refined evaluation of portfolio performance
+by emphasizing the balance between downside risk and potential gains.
+
+The Sortino Ratio, which measures returns relative to downside risk,
+reveals that all portfolios perform similarly, with slight differences
+around -0.996. This indicates uniformly weak performance when evaluated
+against the minimum acceptable return (MAR) of 8.957\%.
+
+Conditional drawdown at the 5\% confidence level highlights the Most
+Diversified portfolio as the best performer (0.0413), followed closely
+by RPP w/o Bonds (0.0400). These results indicate that these portfolios
+experience relatively smaller extreme drawdowns. In contrast, RPP
+(0.0283) performs the weakest in this metric, reflecting greater
+vulnerability to extreme losses.
+
+Upside potential, measured against a MAR of 9\%, is undefined (NaN) for
+all portfolios, likely due to the absence of meaningful positive
+deviations above the MAR during the evaluation period.
+
+For Expected Shortfall (ES), which represents the average of the
+worst-case losses, RPP w/o Bonds (-0.0201) achieves the best
+performance. The Most Diversified portfolio (-0.0178) and RPP (-0.0142)
+exhibit slightly worse outcomes. A similar pattern is observed for VaR,
+another tail-risk metric, where RPP w/o Bonds (-0.0123) performs the
+best, while RPP (-0.0086) lags behind.
+
+The downside risk metrics such as conditional drawdown favor the Most
+Diversified and RPP w/o Bonds portfolios. However, both upside potential
+and tail risk metrics highlight significant challenges faced by all
+portfolios in achieving favorable risk-adjusted returns during the
+evaluation period.
+
+\begin{table}
+\centering
+\caption{\label{tab:downside-metrics}Downside and Opportunity-based Performance Metrics}
+\centering
+\begin{tabular}[t]{l|r|r|r|r}
+\hline
+  & MVP & RPP w/o Bonds & RPP & MDP\\
+\hline
+Sortino Ratio (MAR = 8.957\%) & -0.9960579 & -0.9952025 & -0.9976658 & -0.9960008\\
+\hline
+Conditional Drawdown 5\% & 0.0382246 & 0.0400242 & 0.0282992 & 0.0432241\\
+\hline
+Upside Potential (MAR = 9\%) & NaN & NaN & NaN & NaN\\
+\hline
+ES & -0.0183472 & -0.0201133 & -0.0142241 & -0.0178530\\
+\hline
+VaR & -0.0106980 & -0.0123244 & -0.0085753 & -0.0106023\\
+\hline
+\end{tabular}
+\end{table}
+
+To evaluate whether the RPP performs reasonably well across all economic
+environments, the returns, volatility, and Sharpe Ratio were calculated
+for different economic states. The results in Table 4 suggest that RPPs
+struggle to consistently deliver reasonable returns in all economic
+regimes.
+
+While the RPP w/o Bonds slightly improves performance in high-growth
+regimes, with a Sharpe Ratio of 0.0501 compared to 0.0476 for RPP, and
+in recessions, with a Sharpe Ratio of 0.0483 compared to 0.0245 for RPP,
+both portfolios underperform in these regimes relative to their
+performance during moderate growth. In moderate growth conditions, the
+Sharpe Ratios of 0.0865 for RPP and 0.0824 for RPP w/o Bonds indicate
+more favorable risk-adjusted returns.
+
+However, elevated volatility during recessions, measured at 0.0090 for
+RPP and 0.0147 for RPP w/o Bonds, underscores the challenges of
+maintaining stability during adverse economic conditions. Although the
+inclusion or exclusion of bonds introduces slight performance
+variations, neither configuration of the RPP fully meets expectations
+for producing stable and reasonable returns across all economic states,
+particularly during downturns.
+
+\begin{table}
+\centering
+\caption{\label{tab:regime}Performance at Different Economic States}
+\centering
+\begin{tabular}[t]{l|l|r|r|r}
+\hline
+Dataset & regime & mean\_return & volatility & sharpe\_ratio\\
+\hline
+MV & High Growth & 0.0003836 & 0.0078146 & 0.0490857\\
+\hline
+MV & Moderate Growth & 0.0005376 & 0.0063563 & 0.0845814\\
+\hline
+MV & Recession & 0.0006793 & 0.0137366 & 0.0494489\\
+\hline
+RPP & High Growth & 0.0002948 & 0.0061991 & 0.0475549\\
+\hline
+RPP & Moderate Growth & 0.0004485 & 0.0052060 & 0.0861512\\
+\hline
+RPP & Recession & 0.0002215 & 0.0090461 & 0.0244847\\
+\hline
+RPP\_nb & High Growth & 0.0004408 & 0.0087913 & 0.0501382\\
+\hline
+RPP\_nb & Moderate Growth & 0.0005836 & 0.0070822 & 0.0824036\\
+\hline
+RPP\_nb & Recession & 0.0007127 & 0.0147488 & 0.0483259\\
+\hline
+MD & High Growth & 0.0003664 & 0.0079010 & 0.0463753\\
+\hline
+MD & Moderate Growth & 0.0006768 & 0.0065835 & 0.1027994\\
+\hline
+MD & Recession & 0.0010394 & 0.0135489 & 0.0767113\\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Concluding Remarks}\label{concluding-remarks}
+
+This study assessed the feasibility of a South African-based RPP. Two
+RPP configurations were analyzed: one including South African stocks and
+government bonds with 2- and 10-year maturities, and another excluding
+bonds. These portfolios were compared to a MVP and a MMDP, two widely
+recognized risk-minimizing approaches derived from MPT. To evaluate
+their performance, cumulative and annualized returns were calculated,
+alongside downside and drawdown measures to assess risk-adjusted
+returns. Additionally, the returns and volatility of the portfolios were
+examined across different economic states to evaluate Brightwater's
+claim that RPPs perform well under all conditions.
+
+The findings present mixed conclusions. The results indicate that the
+RPP without bonds performs well in managing downside risk, effectively
+limiting short-term losses below the target return. However, it performs
+poorly in managing drawdown risk, experiencing deeper and more prolonged
+declines during adverse market conditions. This highlights the
+portfolio's ability to stabilize returns in the short term but also
+reveals vulnerabilities to sustained downturns, emphasizing the need for
+enhanced resilience strategies to improve recovery from significant
+drawdowns. Similarly, cumulative returns do not provide strong support
+for either RPP configuration, as both underperform relative to the MVP
+and MDP. The inclusion of bonds in the RPP lowers its overall
+performance but results in the least volatile portfolio across all
+economic regimes.
+
+Ultimately, the relatively low returns of the RPP portfolios highlight
+the frequent need for leverage to achieve competitive returns, as
+suggested in previous literature (\citeproc{ref-chaves2011risk}{Chaves
+\emph{et al.}, 2011}; \citeproc{ref-hurst2010understanding}{Hurst
+\emph{et al.}, 2010}). While RPPs demonstrate strengths in managing
+downside risk, their underperformance in other areas raises questions
+about their feasibility as a robust investment strategy in the South
+African context.
+
+\section{Appendix}\label{appendix}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{Essay_files/figure-latex/Figure 4-1} 
+
+}
+
+\caption{Drawdowns \label{Figure4}}\label{fig:Figure 4-1}
+\end{figure}
+\begin{figure}[H]
+
+{\centering \includegraphics{Essay_files/figure-latex/Figure 4-2} 
+
+}
+
+\caption{Drawdowns \label{Figure4}}\label{fig:Figure 4-2}
+\end{figure}
+\begin{figure}[H]
+
+{\centering \includegraphics{Essay_files/figure-latex/Figure 4-3} 
+
+}
+
+\caption{Drawdowns \label{Figure4}}\label{fig:Figure 4-3}
+\end{figure}
+\begin{figure}[H]
+
+{\centering \includegraphics{Essay_files/figure-latex/Figure 4-4} 
+
+}
+
+\caption{Drawdowns \label{Figure4}}\label{fig:Figure 4-4}
+\end{figure}
+
+\phantomsection\label{refs}
+\begin{CSLReferences}{1}{1}
+\bibitem[\citeproctext]{ref-asness2012leverage}
+Asness, C.S., Frazzini, A. \& Pedersen, L.H. 2012. Leverage aversion and
+risk parity. \emph{Financial Analysts Journal}. 68(1):47--59.
+
+\bibitem[\citeproctext]{ref-chaves2011risk}
+Chaves, D., Hsu, J., Li, F. \& Shakernia, O. 2011. Risk parity portfolio
+vs. Other asset allocation heuristic portfolios. \emph{Journal of
+Investing}. 20(1):108.
+
+\bibitem[\citeproctext]{ref-choi2024diversified}
+Choi, J., Kim, H. \& Kim, Y.S. 2024. Diversified reward-risk parity in
+portfolio construction. \emph{Studies in Nonlinear Dynamics \&
+Econometrics}. (0).
+
+\bibitem[\citeproctext]{ref-choueifaty2008towards}
+Choueifaty, Y. 2008. Towards maximum diversification. \emph{Available at
+SSRN 4063676}.
+
+\bibitem[\citeproctext]{ref-chow2014study}
+Chow, T.-M., Hsu, J.C., Kuo, L.-L. \& Li, F. 2014. A study of
+low-volatility portfolio construction methods. \emph{The Journal of
+Portfolio Management}. 40(4):89--105.
+
+\bibitem[\citeproctext]{ref-costa2022data}
+Costa, G. \& Kwon, R.H. 2022. Data-driven distributionally robust risk
+parity portfolio optimization. \emph{Optimization Methods and Software}.
+37(5):1876--1911.
+
+\bibitem[\citeproctext]{ref-damodaran1999estimating}
+Damodaran, A. 1999. Estimating risk free rates. \emph{WP, Stern School
+of Business, New York}. 20.
+
+\bibitem[\citeproctext]{ref-hurst2010understanding}
+Hurst, B., Johnson, B. \& Ooi, Y.H. 2010. Understanding risk parity.
+\emph{AQR Capital Management}.
+
+\bibitem[\citeproctext]{ref-james2023semi}
+James, N., Menzies, M. \& Chan, J. 2023. Semi-metric portfolio
+optimization: A new algorithm reducing simultaneous asset shocks.
+\emph{Econometrics}. 11(1):8.
+
+\bibitem[\citeproctext]{ref-loayza2007macroeconomic}
+Loayza, N.V., Ranciere, R., Serven, L. \& Ventura, J. 2007.
+Macroeconomic volatility and welfare in developing countries: An
+introduction. \emph{The World Bank Economic Review}. 21(3):343--357.
+
+\bibitem[\citeproctext]{ref-maillard2010properties}
+Maillard, S., Roncalli, T. \& Tiletche, J. 2010. The properties of
+equally weighted risk contribution portfolios. \emph{Journal of
+Portfolio Management}. 36(4):60.
+
+\bibitem[\citeproctext]{ref-e5a1bb8f-41b7-35c6-95cd-8b366d3e99bc}
+Markowitz, H. 1952. Portfolio selection. \emph{The Journal of Finance}.
+7(1):77--91. {[}Online{]}, Available:
+\url{http://www.jstor.org/stable/2975974} {[}2025, January 24{]}.
+
+\bibitem[\citeproctext]{ref-qian2005risk}
+Qian, E. et al. 2005. Risk parity portfolios: Efficient portfolios
+through true diversification. \emph{Panagora Asset Management}.
+
+\bibitem[\citeproctext]{ref-qian2011risk}
+Qian, E. 2011. Risk parity and diversification. \emph{Journal of
+Investing}. 20(1):119.
+
+\bibitem[\citeproctext]{ref-roncalli2013introduction}
+Roncalli, T. 2013. \emph{Introduction to risk parity and budgeting}. CRC
+Press.
+
+\bibitem[\citeproctext]{ref-stefanova-2020}
+Stefanova, K. 2020. \href{}{{The end of the golden era for risk
+parity}}. \emph{The Hedgefund Journal}. (149).
+
+\end{CSLReferences}
+
+\bibliography{Tex/ref}
+
+
+
+
+
+\end{document}

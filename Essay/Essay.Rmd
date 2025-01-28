@@ -92,7 +92,7 @@ output:
     fig_width: 3.5 # Adjust default figure sizes. This can also be done in the chunks of the text.
     fig_height: 3.5
 abstract: |
-  This study evaluates the applicability of Risk Parity Portfolios (RPP) in the South African market, comparing their performance to the Minimum Variance Portfolio (MVP) and Maximum Diversification Portfolio (MDP). Utilizing data from 2007 to 2024, the analysis examines risk-adjusted returns, drawdown metrics, and performance across economic regimes. While RPPs demonstrate robustness during downturns, their overall returns lag behind MVP and MDP, particularly in high-growth conditions. The findings highlight the trade-offs in leveraging RPPs for portfolio diversification in volatile markets, offering insights for investors seeking balanced risk allocation strategies.
+ This study evaluates the applicability of Risk Parity Portfolios (RPP) in the South African market, comparing their performance to the Minimum Variance Portfolio (MVP) and Maximum Diversification Portfolio (MDP). Utilizing data from 2007 to 2024, the analysis examines risk-adjusted returns, drawdown metrics, and performance across economic regimes. While RPPs demonstrate robustness during downturns, their overall returns lag behind MVP and MDP, particularly in high-growth conditions. The findings highlight the trade-offs in leveraging RPPs for portfolio diversification in volatile markets, offering insights for investors seeking balanced risk allocation strategies.
 ---
 
 <!-- First: Set your default preferences for chunk options: -->
@@ -143,11 +143,8 @@ SA_Growth <- read_csv2("/Users/x/Downloads/SA_Growth.csv", show_col_types = FALS
 
 # Introduction \label{Introduction}
 
-Finding the balance between risk and return is a central challenge in portfolio construction. Traditional methods for addressing this issue are grounded in Modern Portfolio Theory (MPT), introduced by @e5a1bb8f-41b7-35c6-95cd-8b366d3e99bc, which provides frameworks such as the Minimum Variance Portfolio (MVP) and the Maximum Diversification Portfolio (MDP). These approaches focus on risk, often measured as variance, and aim to optimize either expected returns or risk minimization [@choueifaty2008towards; @e5a1bb8f-41b7-35c6-95cd-8b366d3e99bc].
-
-However, an alternative methodology was introduced by Ray Dalio of Bridgewater Associates in 1996 with the "All-Weather Fund," designed to perform well across all economic conditions and first assessed academically by @qian2005risk. This fund employs the risk parity approach (RPP), where assets contribute equally to the portfolio’s overall risk, emphasizing diversification over maximizing returns or minimizing risk (@maillard2010properties).
-
-The RPP approach has demonstrated robust performance in various studies (@maillard2010properties; @chaves2011risk; @choi2024diversified). However, most research focuses on portfolios composed of assets from developed markets, which typically exhibit lower volatility [@loayza2007macroeconomic]. To explore its applicability in more volatile environments, this paper investigates the performance of an RPP constructed from South African assets. The analysis compares the risk and return of the South African RPP to two commonly used risk-minimizing portfolios, the MVP and the MDP.
+Finding the balance between risk and return is a central challenge in portfolio construction. Traditional methods for addressing this issue are grounded in Modern Portfolio Theory (MPT), introduced by @e5a1bb8f-41b7-35c6-95cd-8b366d3e99bc, which provides frameworks such as the Minimum Variance Portfolio (MVP) and the Maximum Diversification Portfolio (MDP). These approaches focus on risk, often measured as variance, and aim to optimize either expected returns or risk minimization [@choueifaty2008towards; @e5a1bb8f-41b7-35c6-95cd-8b366d3e99bc]. 
+However, an alternative methodology was introduced by Ray Dalio of Bridgewater Associates in 1996 (@bridgewater-2020) with the "All-Weather Fund," designed to perform well across all economic conditions and first assessed academically by @qian2005risk. This fund employs the risk parity approach (RPP), where assets contribute equally to the portfolio’s overall risk, emphasizing diversification over maximizing returns or minimizing risk (@maillard2010properties). The RPP approach has demonstrated robust performance in various studies (@maillard2010properties; @chaves2011risk; @choi2024diversified). However, most research focuses on portfolios composed of assets from developed markets, which typically exhibit lower volatility [@loayza2007macroeconomic]. To explore its applicability in more volatile environments, this paper investigates the performance of an RPP constructed from South African assets. The analysis compares the risk and return of the South African RPP to two commonly used risk-minimizing portfolios, the MVP and the MDP.
 
 This paper addresses the question: *How can the risk parity approach be effectively implemented to construct a diversified portfolio of South African assets, and how does it compare to traditional asset allocation strategies in terms of risk-adjusted returns?*
 
@@ -156,14 +153,12 @@ To answer this question, the next section examines the theoretical foundations o
 
 # Theory
 
-Risk Parity Portfolios (RPPs) offer an alternative approach to traditional portfolio construction by emphasizing equal risk contributions from all assets in a portfolio (@roncalli2013introduction). This concept diverges from the mean-variance optimization framework of Modern Portfolio Theory (MPT), which focuses on maximizing returns for a given level of risk or minimizing risk for a desired return level. Instead, RPPs aim to achieve balance by allocating portfolio weights such that each asset contributes equally to the overall portfolio risk [@asness2012leverage; @maillard2010properties].
+RPPs offer an alternative approach to traditional portfolio construction by emphasizing equal risk contributions from all assets in a portfolio (@roncalli2013introduction). This concept diverges from the mean-variance optimization framework of MPT, which focuses on maximizing returns for a given level of risk or minimizing risk for a desired return level. RPPs are designed to achieve equilibrium by allocating portfolio weights in a manner that ensures each asset contributes an equal proportion to the overall portfolio risk. [@asness2012leverage; @maillard2010properties].
 
 ## Principles of Risk Parity
 
 @qian2011risk highlights the importance of diversification in constructing robust portfolios, which is the core idea of RPPs. In MPT, high-return assets often dominate the portfolio due to their favorable expected risk-return trade-off. This dominance can lead to concentration in specific asset classes, reducing the benefits of diversification [@qian2011risk]. To address this issue, thresholds are often imposed on portfolio composition, such as weight limits for specific assets or industries. However, these thresholds are based on subjective human estimations, leading to variability in portfolio performance [@hurst2010understanding].
-Risk parity, by contrast, avoids such concentration by equalizing marginal risk contributions, ensuring that no single asset disproportionately influences the portfolio’s performance.
-
-The mathematical foundation of RPPs involves calculating the marginal risk contribution of each asset and iteratively adjusting the weights until these contributions are equalized. This process is mathematically expressed as:
+RPPs, by contrast, avoids such concentration by equalizing marginal risk contributions, ensuring that no single asset disproportionately influences the portfolio’s performance. The mathematical foundation of RPPs involves calculating the marginal risk contribution of each asset and iteratively adjusting the weights until these contributions are equalized. This process is mathematically expressed as:
 
 \begin{equation}
 RC_i = \frac{\sigma_p}{n}, \quad \forall i
@@ -190,18 +185,15 @@ The optimization problem to achieve risk parity can then be formulated as:
 ## Advantages and Limitations
 
 One primary advantage of RPPs is their robustness across different market conditions (@hurst2010understanding). Additionally, their emphasis on risk balance reduces portfolio sensitivity to individual asset performance, thereby enhancing resilience (@costa2022data).
-
 However, RPPs are not without limitations. The assumption of equal risk contributions can result in overexposure to low-volatility assets, which may fail to deliver adequate returns, especially in rising markets [@maillard2010properties]. Moreover, while RPPs are designed to perform across all economic regimes, they may fail during structural breaks or extreme shocks, such as the Covid-19 pandemic [@stefanova-2020]. This limitation is also shared by other risk-minimizing portfolios [@james2023semi].
 
 ## Empirical Evidence
 
-Empirical research supports the efficacy of the risk parity approach in achieving superior risk-adjusted returns. For example, @asness2012leverage found that RPPs consistently outperformed traditional asset allocation strategies in terms of Sharpe ratio. Similarly, @chow2014study demonstrated that RPPs exhibit lower drawdowns and better performance during economic downturns, underscoring their utility as an all-weather strategy. @maillard2010properties showed that RPPs tend to perform well in various economic environments due to their inherent diversification.
-
-While much of the existing literature focuses on developed markets, emerging markets present unique challenges and opportunities. Common characteristics of emerging market assets include higher volatility, lower liquidity, and greater exposure to macroeconomic shocks.
+Empirical research supports the efficacy of the RPP approach in achieving superior risk-adjusted returns. For example, @asness2012leverage found that RPPs consistently outperformed traditional asset allocation strategies in terms of Sharpe ratio. Similarly, @chow2014study demonstrated that RPPs exhibit lower drawdowns and better performance during economic downturns, underscoring their utility as an all-weather strategy. @maillard2010properties showed that RPPs tend to perform well in various economic environments due to their inherent diversification. While much of the existing literature focuses on developed markets, emerging markets present unique challenges and opportunities. Common characteristics of emerging market assets include higher volatility, lower liquidity, and greater exposure to macroeconomic shocks.
 
 # Methodology
 
-The performance of the Risk Parity Portfolio (RPP) will be assessed by comparing it to two other risk-based portfolio construction methods: the Minimum Variance Portfolio (MVP) and the Maximum Diversification Portfolio (MDP). The construction of these portfolios, the data used, and the methods employed for performance evaluation will be described in the following subsections.
+The performance of RPPs will be assessed by comparing it to two other risk-based portfolio construction methods: the MVP and the MDP. The construction of these portfolios, the data used, and the methods employed for performance evaluation will be described in the following subsections.
 
 ## Data
 
@@ -227,17 +219,13 @@ The MVP minimizes portfolio variance using the covariance matrix of asset return
 \end{equation}
 
 The equation represents the portfolio variance, the vector of portfolio weights, and the covariance matrix of asset returns.  
-
 The MDP maximizes the diversification ratio, which balances the weighted average of individual asset volatilities with the portfolio's total risk:  
 
 \begin{equation}
 {DR} = \frac{\sum_{i=1}^{N} w_i \sigma_i}{\sqrt{\mathbf{w}^\top \Sigma \mathbf{w}}}
 \end{equation}
 
-The RPP, MVP, and MDP represent distinct approaches to portfolio optimization, all aimed at minimizing risk without relying on expected returns for construction. The RPP equalizes risk contributions across assets, focusing on balancing portfolio risk without prioritizing correlations or volatilities. In contrast, the MVP minimizes total portfolio variance, often leading to concentrated allocations in low-risk assets and high sensitivity to asset correlations. The MDP, on the other hand, maximizes the diversification ratio by allocating more weight to uncorrelated, high-volatility assets, thereby enhancing diversification.
-
-The shared objective of risk minimization, combined with their independence from expected returns, makes the MVP and MDP suitable benchmarks for assessing the performance of the RPP..
-
+The RPP, MVP, and MDP represent distinct approaches to portfolio optimization, all aimed at minimizing risk without relying on expected returns for construction. The RPP equalizes risk contributions across assets, focusing on balancing portfolio risk without prioritizing correlations or volatilities. In contrast, the MVP minimizes total portfolio variance, often leading to concentrated allocations in low-risk assets and high sensitivity to asset correlations. The MDP, on the other hand, maximizes the diversification ratio by allocating more weight to uncorrelated, high-volatility assets, thereby enhancing diversification. The shared objective of risk minimization, combined with their independence from expected returns, makes the MVP and MDP suitable benchmarks for assessing the performance of the RPP..
 
 5. Empirical Results
 
@@ -358,7 +346,7 @@ SharpeRatio(p.returns.nb, Rf = 0.095) %>%
 
 The third table introduces additional downside and opportunity-based performance metrics, including the Sortino Ratio, conditional drawdown, upside potential, Expected Shortfall (ES), and Value at Risk (VaR). These metrics provide a more refined evaluation of portfolio performance by emphasizing the balance between downside risk and potential gains.
 
-The Sortino Ratio, which measures returns relative to downside risk, reveals that all portfolios perform similarly, with slight differences around -0.996. This indicates uniformly weak performance when evaluated against the minimum acceptable return (MAR) of 8.957%.
+The Sortino Ratio, which measures returns relative to downside risk, reveals that all portfolios perform similarly, with slight differences around -0.996. This indicates uniformly weak performance when evaluated against the MAR of 8.957%.
 
 Conditional drawdown at the 5% confidence level highlights the Most Diversified portfolio as the best performer (0.0413), followed closely by RPP w/o Bonds (0.0400). These results indicate that these portfolios experience relatively smaller extreme drawdowns. In contrast, RPP (0.0283) performs the weakest in this metric, reflecting greater vulnerability to extreme losses.
 
@@ -408,89 +396,7 @@ The findings present mixed conclusions. The results indicate that the RPP withou
 
 Ultimately, the relatively low returns of the RPP portfolios highlight the frequent need for leverage to achieve competitive returns, as suggested in previous literature [@chaves2011risk; @hurst2010understanding]. While RPPs demonstrate strengths in managing downside risk, their underperformance in other areas raises questions about their feasibility as a robust investment strategy in the South African context.
 
-# Appendix
-
-```{r Figure 4,  warning =  FALSE, fig.align = 'center', fig.cap = "Drawdowns \\label{Figure4}", fig.ext = 'png', fig.height = 3, fig.width = 3}
-PerformanceAnalytics::chart.StackedBar(parity.weights, 
-                                       xlab = "Rebalance Dates",
-                                       ylab = "Weight", 
-                                       main = "Risk Parity",
-                                       legend.loc = NULL)
-
-PerformanceAnalytics::chart.StackedBar(parity.weights.nb, 
-                                       xlab = "Rebalance Dates",
-                                       ylab = "Weight", 
-                                       main = "Risk Parity without Bonds",
-                                       legend.loc = NULL)
-
-PerformanceAnalytics::chart.StackedBar(weights_mv, 
-                                       xlab = "Rebalance Dates",
-                                       ylab = "Weight", 
-                                       main = "MVP",
-                                       legend.loc = NULL)
-
-PerformanceAnalytics::chart.StackedBar(weights_md, 
-                                       xlab = "Rebalance Dates",
-                                       ylab = "Weight", 
-                                       main = "MDP",
-                                       legend.loc = NULL)
-
-```
+# References
 
 
-
-
-```{r}
-# chart.RollingPerformance(
-#   R = p.returns.nb,
-#   FUN = "SharpeRatio.annualized",
-#   width = 12,
-#   main = "Rolling Sharpe Ratio",
-#   legend.loc = "topright"
-# )
-# 
-# risk_f <- mean(BondYields_10Y_SA$BondYield_10)
-# SharpeRatio(p.returns.nb, Rf = 0.095)
-# SortinoRatio(p.returns.nb, Rf = 0.095)
-# CDD(p.returns.nb, Rf = 0.095)
-# UpsidePotentialRatio(p.returns.nb, MAR = 0.053)
-# 
-# 
-# TreynorRatio(parity.returns$returns, ALSI_returns$returns)
-# TreynorRatio(parity.returns.nb$returns, ALSI_returns$returns)
-# 
-# 
-# 
-# 
-# 
-# mar_ratios <- apply(ALSI_returns$returns, 2, function(x) {
-#   annualized_return <- Return.annualized(x)
-#   max_drawdown <- maxDrawdown(x)
-#   annualized_return / max_drawdown
-# })
-
-
-```
-
-
-```{r}
-# returns_ts <- as.timeSeries(LCL_filtered)
-# spec <- portfolioSpec() # fPortfolio
-# setRiskFreeRate(spec) <- 0 # Set risk-free rate if applicable (default: 0)
-# 
-# # Set constraints (e.g., full investment and box constraints)
-# constraints <- "LongOnly" # Ensures non-negative weights that sum to 1
-# 
-# # Optimize the portfolio for minimum variance
-# min_vol_portfolio <- minvariancePortfolio(returns_ts, spec = spec, constraints = constraints)
-# weights <- getWeights(min_vol_portfolio) # Portfolio weights as a named numeric vector
-# date <- time(min_vol_portfolio@data)     # Extract the optimization date
-# 
-# # Convert weights to a data.frame
-# weights_df <- data.frame(t(weights)) # Transpose weights to make them rows
-# rownames(weights_df) <- as.character(date) # Set rownames to the optimization date
-# 
-# # Convert to xts
-# weights_xts <- as.xts(weights_df)
-```
 

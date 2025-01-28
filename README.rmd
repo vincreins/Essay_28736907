@@ -98,10 +98,14 @@ Bond_return_10 <- Bond_return(BondYields_10Y_SA, "BondYield_10", 10)
 Bond_return_2 <- Bond_return(BondYields_2Y_SA, "BondYield_2", 2)
 ```
 
+After merging the bond and stock returns the covariance matrix is calculated.
+
 ```{r}
 LCL_Bond <- merge.xts(Bond_return_10, Bond_return_2, LCL_filtered, join = "inner")
 Sigma <- cov(LCL_Bond)
 ```
+
+The riskParityPortfolio function from the same named package will be used to determine the weights for the RPP. This function is embedded in the RollingRiskParity function which rebalances the portfolio every three months. 
 
 ```{r}
 portfolio.parity <- riskParityPortfolio(Sigma)
@@ -110,6 +114,8 @@ rWindows<-rollingWindows(LCL_Bond, period="12m",
 parity.weights <- RollingRiskParity(rWindows$from@Data, rWindows$to@Data, LCL_Bond) %>% na.omit()
 parity.returns <- Return.portfolio(LCL_Bond, weights=parity.weights,verbose=TRUE)
 ```
+
+The same steps are repeated for the portfolio without bonds. For further analysis all portfolios are then merged to one data frame.
 
 ```{r}
 Sigma_nb <- cov(LCL_filtered)
@@ -122,6 +128,8 @@ p.returns.nb <- merge.xts(returns.mv$returns, parity.returns.nb$returns, parity.
 names(p.returns.nb)<-c("MVP", "RPP w/o Bonds", "RPP", "MDP")
 ```
 
+For a first impression on the performance, the cumulative returns and the annualized returns are calculated.
+
 ```{r}
 PerformanceAnalytics::chart.CumReturns(p.returns.nb, colorset=rich6equal,
                           lwd=1, cex.legend = 0.5, event.labels = TRUE, main = "", legend.loc = "topleft")
@@ -132,6 +140,8 @@ chart.RollingPerformance(p.returns.nb, width = 252, colorset=rich6equal,
                           lwd=1, cex.legend = 0.5, event.labels = TRUE, main = "", legend.loc = "top")
 ```
 
+To quantify the results they are then calculated and the numeric values of both are displayed in a table.
+
 ```{r}
 bind_rows(
   as.data.frame(Return.cumulative(p.returns.nb)),
@@ -140,15 +150,27 @@ bind_rows(
     kable_styling()
 ```
 
+Since the focus of the portfolios is to minimize risk, the drawdown ratio is very interesting to visually compare how the portfolios behave when the financial markets are falling.
+
 ```{r}
 chart.Drawdown(p.returns.nb, colorset=rich6equal,
                           lwd=1, cex.legend = 0.5, event.labels = TRUE, main = "", legend.loc = "bottom")
 ```
 
+To get more insights, in addition to the charts a table with different drawdown measures such as the Sterling, Calmar, Burke, Pain, and Martin Ratios, along with the Pain Index and the Ulcer Index, will be calculated.
+
 ```{r}
 table.DrawdownsRatio(p.returns.nb, Rf = 0.08975) %>%
   kbl(caption = "Drawdowns ratio table", label = "drawdowns-ratio") %>%
   kable_styling()
+```
+
+To compare the downside risk, different Sharpe Ratios will be calculated.
+
+```{r}
+SharpeRatio(p.returns.nb, Rf = 0.095) %>% 
+    kbl(caption = "Sharpe Ratios", label = "sharpe-ratios")  %>% 
+    kable_styling()
 ```
 
 ```{r}
